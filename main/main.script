@@ -1,9 +1,28 @@
+local monarch = require "monarch.monarch"
+local druid = require("druid.druid")
+local saver = require("saver.saver")
+local ahash = require "ahash.ahash"
+
+local sounds = require("scripts.sounds")
+local settings = require("scripts.settings")
+
+
 function init(self)
-	msg.post(".", "acquire_input_focus")
+	math.randomseed(socket.gettime() * 1000)
+	if window then
+		window.set_listener(druid.on_window_callback)
+	end
+
+	saver:init()
+	settings:load()
+	sounds:init()
+
+	msg.post("#", ahash.load_game)
 end
 
-function on_input(self, action_id, action)
-	if action_id == hash("touch") and action.pressed then
-		print("Touch!")
+function on_message(self, message_id, message, sender)
+	if message_id == ahash.load_game then
+		monarch.show(ahash.main_menu)
+		--monarch.show(ahash.level)
 	end
 end

@@ -1,0 +1,231 @@
+script: "/scenes/main_menu/main_menu.gui_script"
+fonts {
+  name: "basic"
+  font: "/builtins/fonts/default.font"
+}
+nodes {
+  position {
+    x: 960.0
+    y: 540.0
+  }
+  size {
+    x: 1920.0
+    y: 1080.0
+  }
+  type: TYPE_BOX
+  id: "root"
+  adjust_mode: ADJUST_MODE_STRETCH
+  layer: "graphics"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  type: TYPE_BOX
+  id: "bg"
+  parent: "root"
+  layer: "graphics"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 446.0
+    y: -75.0
+  }
+  size {
+    x: 2.0
+    y: 2.0
+  }
+  type: TYPE_BOX
+  id: "main"
+  parent: "root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  position {
+    y: 189.0
+  }
+  size {
+    x: 350.0
+    y: 100.0
+  }
+  type: TYPE_BOX
+  id: "button_start"
+  parent: "main"
+  layer: "graphics"
+  inherit_alpha: true
+  slice9 {
+    x: 40.0
+    y: 50.0
+    z: 40.0
+    w: 50.0
+  }
+}
+nodes {
+  position {
+    y: 7.0
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 200.0
+    y: 60.0
+  }
+  color {
+    x: 0.404
+    y: 0.349
+    z: 0.294
+  }
+  type: TYPE_TEXT
+  text: "\320\275\320\260\321\207\320\260\321\202\321\214 \320\270\320\263\321\200\321\203"
+  font: "basic"
+  id: "new_game_text"
+  parent: "button_start"
+  layer: "text"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 36.0
+  }
+  size {
+    x: 460.0
+    y: 204.0
+  }
+  type: TYPE_BOX
+  id: "button_music"
+  parent: "main"
+  layer: "graphics"
+  inherit_alpha: true
+  slice9 {
+    x: 40.0
+    y: 40.0
+    z: 40.0
+    w: 40.0
+  }
+  visible: false
+}
+nodes {
+  position {
+    y: 27.0
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 200.0
+    y: 50.0
+  }
+  color {
+    x: 0.404
+    y: 0.349
+    z: 0.294
+  }
+  type: TYPE_TEXT
+  text: "\320\274\321\203\320\267\321\213\320\272\320\260"
+  font: "basic"
+  id: "music_text"
+  parent: "button_music"
+  layer: "text"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -42.0
+  }
+  type: TYPE_BOX
+  id: "music_slider"
+  parent: "button_music"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -182.0
+  }
+  type: TYPE_BOX
+  id: "music_point"
+  parent: "music_slider"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -105.0
+  }
+  size {
+    x: 460.0
+    y: 204.0
+  }
+  type: TYPE_BOX
+  id: "button_sounds"
+  parent: "main"
+  layer: "graphics"
+  inherit_alpha: true
+  slice9 {
+    x: 40.0
+    y: 40.0
+    z: 40.0
+    w: 40.0
+  }
+  visible: false
+}
+nodes {
+  position {
+    y: 27.0
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 200.0
+    y: 50.0
+  }
+  color {
+    x: 0.404
+    y: 0.349
+    z: 0.294
+  }
+  type: TYPE_TEXT
+  text: "\320\267\320\262\321\203\320\272\320\270"
+  font: "basic"
+  id: "sounds_text"
+  parent: "button_sounds"
+  layer: "text"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -42.0
+  }
+  type: TYPE_BOX
+  id: "sounds_slider"
+  parent: "button_sounds"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -182.0
+  }
+  type: TYPE_BOX
+  id: "sounds_point"
+  parent: "sounds_slider"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+layers {
+  name: "graphics"
+}
+layers {
+  name: "text"
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

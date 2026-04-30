@@ -1,0 +1,47 @@
+local druid = require("druid.druid")
+local monarch = require("monarch.monarch")
+local settings = require("scripts.settings")
+local slider = require("druid.extended.slider")
+local sounds = require("scripts.sounds")
+
+local function on_music_change(self, value)
+    settings:set_music_volume(value)
+end
+
+local function on_sounds_change(self, value)
+    settings:set_sounds_volume(value)
+end
+
+function init(self)
+    self.druid = druid.new(self)
+
+    self.music_slider = self.druid:new(slider, "music_point", vmath.vector3(182, 0, 0), on_music_change) --[[@as druid.slider]]
+    self.music_slider:set_input_node("music_slider")
+    self.music_slider:set(settings.data.music_volume, true)
+
+    self.sounds_slider = self.druid:new(slider, "sounds_point", vmath.vector3(182, 0, 0), on_sounds_change) --[[@as druid.slider]]
+    self.sounds_slider:set_input_node("sounds_slider")
+    self.sounds_slider:set(settings.data.sounds_volume, true)
+
+    self.button_new_game = self.druid:new_button("button_start", function()
+        -- monarch.show("intro")
+        -- sounds:stop(sounds.music_url)
+        -- sounds:play(sounds.music_url2)
+    end)
+end
+
+function final(self)
+    self.druid:final()
+end
+
+function update(self, dt)
+    self.druid:update(dt)
+end
+
+function on_message(self, message_id, message, sender)
+    self.druid:on_message(message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+    return self.druid:on_input(action_id, action)
+end

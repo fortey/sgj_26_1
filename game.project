@@ -7,6 +7,7 @@ dependencies#2 = https://github.com/Insality/druid/archive/refs/tags/1.2.2.zip
 dependencies#3 = https://github.com/Insality/defold-saver/archive/refs/tags/6.zip
 dependencies#4 = https://github.com/Insality/defold-tweener/archive/refs/tags/5.zip
 dependencies#5 = https://github.com/Insality/panthera/archive/refs/tags/runtime.6.zip
+dependencies#6 = https://github.com/subsoap/ahash/archive/master.zip
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -43,3 +44,9 @@ show_made_with_defold = 0
 show_fullscreen_button = 0
 show_console_banner = 0
 
+[saver]
+save_name = gamesave
+save_folder = sgj
+autosave_timer = 0
+saver_key = saver
+lua_require_as_string = 0

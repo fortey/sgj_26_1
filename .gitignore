@@ -42,3 +42,6 @@ luac.out
 /.internal
 /.vscode
 /debugger
+/.editor_settings
+/build
+.editor_settings

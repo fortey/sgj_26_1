@@ -23,10 +23,11 @@ local h           = inputmapper.h
 
 -- available animations list
 local animations = {
-    idle = "idle",
-    run  = "run",
-    jump = "jump",
-    fall = "fall",
+    idle   = "idle",
+    run    = "run",
+    jump   = "jump",
+    fall   = "fall",
+    attack = "attack"
 }
 
 local function change_form(self, form_key)
@@ -59,16 +60,16 @@ local function on_bear(self)
 end
 
 function init(self)
-    self.air_timer         = 0
-    self.lock              = 0
+    self.air_timer  = 0
+    self.lock       = 0
 
-    self.onground          = ONGROUND
-    self.move              = vmath.vector3()
-    self.correction        = vmath.vector3()
-    self.dir               = vmath.vector3(1, 0, 0)
-    self.jump_dt           = 0
+    self.onground   = ONGROUND
+    self.move       = vmath.vector3()
+    self.correction = vmath.vector3()
+    self.dir        = vmath.vector3(1, 0, 0)
+    self.jump_dt    = 0
 
-    self.forms             = {
+    self.forms      = {
         girl = {
             key = "girl",
             urls = { msg.url("/player/girl"),
@@ -81,7 +82,8 @@ function init(self)
                 msg.url("/player/pero"),
             },
             idle = "idle",
-            run = "run"
+            run = "run",
+            attack = "attack"
         },
         bear = {
             key = "bear",
@@ -97,6 +99,8 @@ function init(self)
         }
     }
 
+    self.vfx        = msg.url("/player/vfx")
+    msg.post(self.vfx, "disable")
     self.animation         = panthera.create_go(animation)
     self.current_animation = animations.idle
     change_form(self, "girl")
@@ -392,5 +396,9 @@ function fixed_update(self, dt)
 
     if (self.input.is_pressed(h.JUMP)) then
         jump(self, true)
+    end
+
+    if (self.input.is_pressed(h.FIRE)) then
+        print("fire")
     end
 end

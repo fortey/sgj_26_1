@@ -630,3 +630,19 @@ embedded_instances {
     z: 28.0
   }
 }
+embedded_instances {
+  id: "monarch"
+  data: "components {\n"
+  "  id: \"level\"\n"
+  "  component: \"/scenes/level/level.gui\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "gui"
+  data: "components {\n"
+  "  id: \"level\"\n"
+  "  component: \"/scenes/level/level.gui\"\n"
+  "}\n"
+  ""
+}

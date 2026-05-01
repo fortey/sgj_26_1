@@ -8,6 +8,8 @@ embedded_components {
   "group: \"default\"\n"
   "mask: \"default\"\n"
   "mask: \"unit\"\n"
+  "mask: \"player\"\n"
+  "mask: \"enemy\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"

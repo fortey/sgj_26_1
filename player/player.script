@@ -21,11 +21,18 @@ local BOUNCE      = 0.2
 local h           = inputmapper.h
 
 
+-- available animations list
+local animations = {
+    idle = "idle",
+    run  = "run",
+    jump = "jump",
+    fall = "fall",
+}
 
 local function change_form(self, form_key)
-    self.form = form_key
+    self.form = self.forms[form_key]
     for key, form in pairs(self.forms) do
-        if key == self.form then
+        if key == form_key then
             for index, url in ipairs(form.urls) do
                 msg.post(url, "enable")
             end
@@ -35,24 +42,35 @@ local function change_form(self, form_key)
             end
         end
     end
+
+    if self.form[self.current_animation] then
+        panthera.play(self.animation, self.form[self.current_animation], {
+            is_loop = true
+        })
+    end
 end
 
 local function on_bear(self)
-    change_form(self, "bear")
+    if self.form.key == "bear" then
+        change_form(self, "girl")
+    else
+        change_form(self, "bear")
+    end
 end
 
 function init(self)
-    self.air_timer  = 0
-    self.lock       = 0
+    self.air_timer         = 0
+    self.lock              = 0
 
-    self.onground   = ONGROUND
-    self.move       = vmath.vector3()
-    self.correction = vmath.vector3()
-    self.dir        = vmath.vector3(1, 0, 0)
-    self.jump_dt    = 0
+    self.onground          = ONGROUND
+    self.move              = vmath.vector3()
+    self.correction        = vmath.vector3()
+    self.dir               = vmath.vector3(1, 0, 0)
+    self.jump_dt           = 0
 
-    self.forms      = {
+    self.forms             = {
         girl = {
+            key = "girl",
             urls = { msg.url("/player/girl"),
                 msg.url("/player/body"),
                 msg.url("/player/arm_l"),
@@ -61,19 +79,26 @@ function init(self)
                 msg.url("/player/leg_r"),
                 msg.url("/player/head"),
                 msg.url("/player/pero"),
-            }
+            },
+            idle = "idle",
+            run = "run"
         },
         bear = {
+            key = "bear",
             urls = { msg.url("/player/bear"),
                 msg.url("/player/bear_body"),
                 msg.url("/player/bear_arm_l"),
                 msg.url("/player/bear_arm_r"),
                 msg.url("/player/bear_head"),
                 msg.url("/player/bear_leg_l"),
-                msg.url("/player/bear_leg_r"), }
+                msg.url("/player/bear_leg_r"), },
+            idle = "bear_idle",
+            run = "bear_run"
         }
     }
 
+    self.animation         = panthera.create_go(animation)
+    self.current_animation = animations.idle
     change_form(self, "girl")
 
     -- msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
@@ -88,10 +113,9 @@ function init(self)
         broadcast.send("REGISTER")
     end)
 
-    self.animation = panthera.create_go(animation)
-    panthera.play(self.animation, "run", {
-        is_loop = true
-    })
+    -- panthera.play(self.animation, "run", {
+    --     is_loop = true
+    -- })
 
     events.subscribe(constants.events.on_bear_click, on_bear, self)
 end
@@ -103,14 +127,6 @@ function final(self)
 
     events.unsubscribe(constants.events.on_bear_click, on_bear, self)
 end
-
--- available animations list
-local animations = {
-    idle = { anim = hash("idle") },
-    run  = { anim = hash("run") },
-    jump = { anim = hash("jump") },
-    fall = { anim = hash("fall") },
-}
 
 -- Flip
 local function flip_view(self)
@@ -128,6 +144,11 @@ local function set_animation(self, value)
     if self.current_animation ~= value then
         -- sprite.play_flipbook(self.sprite, value.anim)
         self.current_animation = value
+        if self.form[value] then
+            panthera.play(self.animation, self.form[value], {
+                is_loop = true
+            })
+        end
     end
 end
 

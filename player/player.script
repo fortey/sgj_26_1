@@ -11,6 +11,7 @@ local animation   = require("resources.anims.girl")
 
 local girl_state  = require("scripts.player_states.girl")
 local bear_state  = require("scripts.player_states.bear")
+local eagle_state = require("scripts.player_states.eagle")
 
 local FRICTION    = 0.1
 local ACCEL       = 0.2
@@ -50,9 +51,10 @@ local function change_form(self, form_key)
     end
 
     if self.form[self.current_animation] then
-        panthera.play(self.animation, self.form[self.current_animation], {
-            is_loop = true
-        })
+        panthera.play(self.animation, self.form[self.current_animation].key, self.form[self.current_animation].opts)
+    end
+    if self.form.enter then
+        self.form:enter(self)
     end
 
     if self.form.time then
@@ -63,11 +65,11 @@ local function change_form(self, form_key)
     end
 end
 
-local function on_bear(self)
-    if self.form.key == "bear" then
+local function on_form(self, key)
+    if self.form.key == key then
         --change_form(self, "girl")
     else
-        change_form(self, "bear")
+        change_form(self, key)
     end
 end
 
@@ -82,10 +84,12 @@ function init(self)
     self.correction = vmath.vector3()
     self.dir        = vmath.vector3(1, 0, 0)
     self.jump_dt    = 0
+    self.min_y      = MIN
 
     self.forms      = {
         girl = girl_state,
-        bear = bear_state
+        bear = bear_state,
+        eagle = eagle_state
     }
 
     for key, form in pairs(self.forms) do
@@ -96,8 +100,8 @@ function init(self)
         end
     end
 
-    self.vfx = msg.url("/player/vfx")
-    msg.post(self.vfx, "disable")
+    self.vfx               = msg.url("level:/player/vfx#vfx")
+
     self.animation         = panthera.create_go(animation)
     self.current_animation = animations.idle
     change_form(self, "girl")
@@ -113,7 +117,7 @@ function init(self)
         broadcast.send("REGISTER")
     end)
 
-    events.subscribe(constants.events.on_bear_click, on_bear, self)
+    events.subscribe(constants.events.on_form_click, on_form, self)
 end
 
 function final(self)
@@ -121,7 +125,7 @@ function final(self)
     broadcast.unregister_all()
     msg.post(".", "release_input_focus")
 
-    events.unsubscribe(constants.events.on_bear_click, on_bear, self)
+    events.unsubscribe(constants.events.on_form_click, on_form, self)
 end
 
 -- Flip
@@ -141,9 +145,7 @@ local function set_animation(self, value)
         -- sprite.play_flipbook(self.sprite, value.anim)
         self.current_animation = value
         if self.form[value] then
-            panthera.play(self.animation, self.form[value], {
-                is_loop = true
-            })
+            panthera.play(self.animation, self.form[value].key, self.form[value].opts)
         end
     end
 end
@@ -269,7 +271,6 @@ function on_message(self, message_id, message, sender)
     elseif message_id == contact_point_response then
         collision(self, message)
     elseif message_id == trigger_response then
-
     end
 end
 
@@ -306,8 +307,10 @@ local function friction(self)
 end
 
 local function gravitation(self)
+    -- if not self.in_flight then
     self.move.y = self.move.y - GRAV
     if self.move.y < MIN then self.move.y = MIN end
+    -- end
 end
 
 local function jump(self, pressed)
@@ -329,6 +332,12 @@ end
 local function attack(self, pressed)
     if self.current_animation ~= animations.attack then
         set_animation(self, animations.attack)
+        timer.delay(0.1, false, function()
+            sprite.play_flipbook(self.vfx, "vfx_knife")
+            timer.delay(0.2, false, function()
+                sprite.play_flipbook(self.vfx, "empty")
+            end)
+        end)
     end
 end
 
@@ -393,10 +402,10 @@ function fixed_update(self, dt)
     end
 
     if (self.input.is_pressed(h.JUMP)) then
-        jump(self, true)
+        --jump(self, true)
     end
 
     if (self.input.is_pressed(h.FIRE)) then
-        --attack(self, true)
+        attack(self, true)
     end
 end

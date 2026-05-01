@@ -5,17 +5,24 @@ local constants = require("scripts.constants")
 
 local function set_timeline(self, icon, time)
     gui.set_enabled(self.timeline.root, true)
+    gui.set(self.timeline.progress, "size.x", self.timeline.progress_size)
     gui.animate(self.timeline.progress, "size.x", 0, gui.EASING_LINEAR, time, 0, function()
         gui.set_enabled(self.timeline.root, false)
     end)
     -- gui.animate(self.timeline.progress, "slice9.z", 0, gui.EASING_LINEAR, time)
+
+    gui.play_flipbook(self.timeline.icon, icon)
 end
 
 function init(self)
     self.druid = druid.new(self)
 
     self.button_bear = self.druid:new_button("bear", function()
-        events.trigger(constants.events.on_bear_click)
+        events.trigger(constants.events.on_form_click, "bear")
+    end)
+
+    self.button_eagle = self.druid:new_button("eagle", function()
+        events.trigger(constants.events.on_form_click, "eagle")
     end)
 
     self.hearts = {}

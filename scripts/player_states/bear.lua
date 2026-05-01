@@ -9,8 +9,8 @@ M.urls = { msg.url("level:/player/bear"),
     msg.url("level:/player/bear_leg_l"),
     msg.url("level:/player/bear_leg_r")
 }
-M.idle = "bear_idle"
-M.run = "bear_run"
+M.idle = { key = "bear_idle", opts = { is_loop = true } }
+M.run = { key = "bear_run", opts = { is_loop = true } }
 M.time = 10
 
 return M

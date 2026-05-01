@@ -23,9 +23,8 @@ local BOUNCE      = 0.2
 
 local h           = inputmapper.h
 
-
 -- available animations list
-local animations = {
+local animations  = {
     idle   = "idle",
     run    = "run",
     jump   = "jump",
@@ -38,6 +37,10 @@ local function change_form(self, form_key)
         for index, url in ipairs(self.form.urls) do
             msg.post(url, "disable")
         end
+
+        if self.form_timer then
+            timer.cancel(self.form_timer)
+        end
     end
 
     self.form = self.forms[form_key]
@@ -46,23 +49,31 @@ local function change_form(self, form_key)
         msg.post(url, "enable")
     end
 
-
     if self.form[self.current_animation] then
         panthera.play(self.animation, self.form[self.current_animation], {
             is_loop = true
         })
     end
+
+    if self.form.time then
+        events.trigger(constants.events.set_timeline, self.form.key, self.form.time)
+        self.form_timer = timer.delay(self.form.time, false, function()
+            change_form(self, "girl")
+        end)
+    end
 end
 
 local function on_bear(self)
     if self.form.key == "bear" then
-        change_form(self, "girl")
+        --change_form(self, "girl")
     else
         change_form(self, "bear")
     end
 end
 
 function init(self)
+    self.hp         = 5
+
     self.air_timer  = 0
     self.lock       = 0
 
@@ -96,7 +107,6 @@ function init(self)
     self.input = inputmapper.init(self, false, self.hero_id)
     self.view = msg.url("/player/view")
 
-    print("Player init", msg.url())
     self.position = go.get_position()
 
     timer.delay(0, false, function()

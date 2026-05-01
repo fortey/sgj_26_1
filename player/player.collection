@@ -68,6 +68,7 @@ embedded_instances {
   id: "girl"
   children: "body"
   children: "shadow"
+  children: "vfx"
   data: ""
 }
 embedded_instances {
@@ -495,4 +496,27 @@ embedded_instances {
     x: 4.200001
     y: 422.57437
   }
+}
+embedded_instances {
+  id: "vfx"
+  data: "embedded_components {\n"
+  "  id: \"vfx\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"vfx_knife\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 281.0\\n"
+  "  y: 441.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 114.0\n"
+  "    y: 105.0\n"
+  "  }\n"
+  "}\n"
+  ""
 }

@@ -10,8 +10,8 @@ M.urls = { msg.url("level:/player/girl"),
     msg.url("level:/player/head"),
     msg.url("level:/player/pero"),
 }
-M.idle = "idle"
-M.run = "run"
-M.attack = "attack"
+M.idle = { key = "idle", opts = { is_loop = true } }
+M.run = { key = "run", opts = { is_loop = true } }
+M.attack = { key = "attack" }
 
 return M

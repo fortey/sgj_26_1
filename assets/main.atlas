@@ -49,4 +49,20 @@ images {
   image: "/assets/images/bear/bear_leg.png"
   pivot_y: 0.144269
 }
+images {
+  image: "/assets/images/empty.png"
+}
+images {
+  image: "/assets/images/eagle/eagle_body.png"
+}
+images {
+  image: "/assets/images/eagle/eagle_leg.png"
+  pivot_x: 0.18391
+  pivot_y: 0.099106
+}
+images {
+  image: "/assets/images/eagle/eagle_wing.png"
+  pivot_x: 0.922154
+  pivot_y: 0.692175
+}
 extrude_borders: 2

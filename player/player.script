@@ -3,6 +3,8 @@
 local inputmapper = require 'input.inputmapper'
 local broadcast   = require "helper.broadcast"
 local common      = require 'helper.common'
+local events      = require("event.events")
+local constants   = require("scripts.constants")
 
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
@@ -18,21 +20,66 @@ local BOUNCE      = 0.2
 
 local h           = inputmapper.h
 
+
+
+local function change_form(self, form_key)
+    self.form = form_key
+    for key, form in pairs(self.forms) do
+        if key == self.form then
+            for index, url in ipairs(form.urls) do
+                msg.post(url, "enable")
+            end
+        else
+            for index, url in ipairs(form.urls) do
+                msg.post(url, "disable")
+            end
+        end
+    end
+end
+
+local function on_bear(self)
+    change_form(self, "bear")
+end
+
 function init(self)
-    self.air_timer = 0
-    self.lock = 0
+    self.air_timer  = 0
+    self.lock       = 0
 
-    self.onground = ONGROUND
-    self.move = vmath.vector3()
+    self.onground   = ONGROUND
+    self.move       = vmath.vector3()
     self.correction = vmath.vector3()
-    self.dir = vmath.vector3(1, 0, 0)
-    self.jump_dt = 0
+    self.dir        = vmath.vector3(1, 0, 0)
+    self.jump_dt    = 0
 
-    self.sprite = msg.url("#sprite")
+    self.forms      = {
+        girl = {
+            urls = { msg.url("/player/girl"),
+                msg.url("/player/body"),
+                msg.url("/player/arm_l"),
+                msg.url("/player/arm_r"),
+                msg.url("/player/leg_l"),
+                msg.url("/player/leg_r"),
+                msg.url("/player/head"),
+                msg.url("/player/pero"),
+            }
+        },
+        bear = {
+            urls = { msg.url("/player/bear"),
+                msg.url("/player/bear_body"),
+                msg.url("/player/bear_arm_l"),
+                msg.url("/player/bear_arm_r"),
+                msg.url("/player/bear_head"),
+                msg.url("/player/bear_leg_l"),
+                msg.url("/player/bear_leg_r"), }
+        }
+    }
+
+    change_form(self, "girl")
+
     -- msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
     self.hero_id = 1
     self.input = inputmapper.init(self, true, self.hero_id)
-    self.view = msg.url("/player/girl")
+    self.view = msg.url("/player/view")
 
     print("Player init", msg.url())
     self.position = go.get_position()
@@ -45,12 +92,16 @@ function init(self)
     panthera.play(self.animation, "run", {
         is_loop = true
     })
+
+    events.subscribe(constants.events.on_bear_click, on_bear, self)
 end
 
 function final(self)
     broadcast.send("UNREGISTER")
     broadcast.unregister_all()
     msg.post(".", "release_input_focus")
+
+    events.unsubscribe(constants.events.on_bear_click, on_bear, self)
 end
 
 -- available animations list
@@ -167,7 +218,7 @@ local function collision(self, message)
                     common.play_sound("landing", common.pan(self.position, gain))
 
                     if self.air_timer > .3 then
-                        particlefx.play("#landing")
+                        --particlefx.play("#landing")
                         -- go.set(".", "scale.y", 1)
                         -- go.animate(".", "scale.y", go.PLAYBACK_ONCE_PINGPONG, math.max(0.7 - self.air_timer/10, 0.5), go.EASING_INCUBIC, .2)
                         if self.air_timer > .5 then

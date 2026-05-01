@@ -1,11 +1,13 @@
 local monarch = require "monarch.monarch"
 local druid = require("druid.druid")
+local events = require("event.events")
+local constants = require("scripts.constants")
 
 function init(self)
     self.druid = druid.new(self)
 
     self.button_bear = self.druid:new_button("bear", function()
-
+        events.trigger(constants.events.on_bear_click)
     end)
 end
 

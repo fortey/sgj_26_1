@@ -1,14 +1,10 @@
 images {
-  image: "/assets/images/background.png"
-}
-images {
-  image: "/assets/images/logo.png"
-}
-images {
-  image: "/builtins/graphics/particle_blob.png"
-}
-images {
   image: "/assets/images/bear.png"
   pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/tree_1.png"
+  pivot_x: 0.514806
+  pivot_y: 0.950133
 }
 extrude_borders: 2

@@ -4,6 +4,9 @@ local inputmapper = require 'input.inputmapper'
 local broadcast   = require "helper.broadcast"
 local common      = require 'helper.common'
 
+local panthera    = require("panthera.panthera")
+local animation   = require("resources.anims.girl")
+
 local FRICTION    = 0.1
 local ACCEL       = 0.2
 local SPEED_MAX   = 0.45
@@ -29,6 +32,7 @@ function init(self)
     -- msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
     self.hero_id = 1
     self.input = inputmapper.init(self, true, self.hero_id)
+    self.view = msg.url("/player/girl")
 
     print("Player init", msg.url())
     self.position = go.get_position()
@@ -36,6 +40,11 @@ function init(self)
     timer.delay(0, false, function()
         broadcast.send("REGISTER")
     end)
+
+    self.animation = panthera.create_go(animation)
+    panthera.play(self.animation, "run", {
+        is_loop = true
+    })
 end
 
 function final(self)
@@ -55,11 +64,11 @@ local animations = {
 -- Flip
 local function flip_view(self)
     if self.dir.x == -1 then
-        sprite.set_hflip(self.sprite, true)
-        -- go.set(self.view, "scale.x", -1)
+        --sprite.set_hflip(self.sprite, true)
+        go.set(self.view, "scale.x", -1)
     else
-        sprite.set_hflip(self.sprite, false)
-        -- go.set(self.view, "scale.x", 1)
+        --sprite.set_hflip(self.sprite, false)
+        go.set(self.view, "scale.x", 1)
     end
 end
 

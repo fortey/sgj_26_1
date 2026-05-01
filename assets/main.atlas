@@ -7,4 +7,30 @@ images {
   pivot_x: 0.514806
   pivot_y: 0.950133
 }
+images {
+  image: "/assets/images/girl/arm.png"
+  pivot_x: 0.581628
+  pivot_y: 0.131628
+}
+images {
+  image: "/assets/images/girl/body.png"
+}
+images {
+  image: "/assets/images/girl/head.png"
+  pivot_x: 0.546874
+  pivot_y: 0.885479
+}
+images {
+  image: "/assets/images/girl/leg.png"
+  pivot_x: 0.535
+  pivot_y: 0.167792
+}
+images {
+  image: "/assets/images/girl/pero.png"
+  pivot_x: 0.850556
+  pivot_y: 0.873032
+}
+images {
+  image: "/assets/images/girl/shadow.png"
+}
 extrude_borders: 2

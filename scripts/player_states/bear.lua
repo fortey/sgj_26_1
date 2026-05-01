@@ -11,5 +11,6 @@ M.urls = { msg.url("level:/player/bear"),
 }
 M.idle = "bear_idle"
 M.run = "bear_run"
+M.time = 10
 
 return M

@@ -57,5 +57,151 @@ nodes {
   inherit_alpha: true
   size_mode: SIZE_MODE_AUTO
 }
+nodes {
+  position {
+    x: -960.0
+    y: 540.0
+  }
+  size {
+    x: 2.0
+    y: 2.0
+  }
+  type: TYPE_BOX
+  id: "NW"
+  xanchor: XANCHOR_LEFT
+  yanchor: YANCHOR_TOP
+  parent: "root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  position {
+    x: 38.0
+    y: -35.0
+  }
+  size {
+    x: 2.0
+    y: 2.0
+  }
+  type: TYPE_BOX
+  id: "hearts"
+  parent: "NW"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  type: TYPE_BOX
+  texture: "gui/heart"
+  id: "heart1"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 50.0
+  }
+  type: TYPE_BOX
+  texture: "gui/heart"
+  id: "heart2"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 100.0
+  }
+  type: TYPE_BOX
+  texture: "gui/heart"
+  id: "heart3"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 150.0
+  }
+  type: TYPE_BOX
+  texture: "gui/heart"
+  id: "heart4"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 200.0
+  }
+  type: TYPE_BOX
+  texture: "gui/heart"
+  id: "heart5"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 540.0
+  }
+  size {
+    x: 2.0
+    y: 2.0
+  }
+  type: TYPE_BOX
+  id: "N"
+  yanchor: YANCHOR_TOP
+  parent: "root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  position {
+    x: -370.0
+    y: -47.0
+  }
+  size {
+    x: 2.0
+    y: 2.0
+  }
+  type: TYPE_BOX
+  id: "timeline"
+  parent: "N"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  enabled: false
+  visible: false
+}
+nodes {
+  size {
+    x: 763.0
+    y: 22.0
+  }
+  type: TYPE_BOX
+  texture: "gui/timeline"
+  id: "timeline_progress"
+  pivot: PIVOT_W
+  parent: "timeline"
+  inherit_alpha: true
+  slice9 {
+    z: 10.0
+  }
+  alpha: 0.52
+}
+nodes {
+  position {
+    x: -25.0
+  }
+  type: TYPE_BOX
+  texture: "gui/bear_icon"
+  id: "timeline_icon"
+  parent: "timeline"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

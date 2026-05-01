@@ -3,18 +3,40 @@ local druid = require("druid.druid")
 local events = require("event.events")
 local constants = require("scripts.constants")
 
+local function set_timeline(self, icon, time)
+    gui.set_enabled(self.timeline.root, true)
+    gui.animate(self.timeline.progress, "size.x", 0, gui.EASING_LINEAR, time, 0, function()
+        gui.set_enabled(self.timeline.root, false)
+    end)
+    -- gui.animate(self.timeline.progress, "slice9.z", 0, gui.EASING_LINEAR, time)
+end
+
 function init(self)
     self.druid = druid.new(self)
 
     self.button_bear = self.druid:new_button("bear", function()
         events.trigger(constants.events.on_bear_click)
     end)
-    msg.post(".", "release_input_focus")
+
+    self.hearts = {}
+    for i = 1, 5 do
+        self.hearts[i] = gui.get_node("heart" .. i)
+    end
+
+    self.timeline = {
+        root = gui.get_node("timeline"),
+        icon = gui.get_node("timeline_icon"),
+        progress = gui.get_node("timeline_progress"),
+        progress_size = 763
+    }
+
     msg.post("#", "postinit")
+    events.subscribe(constants.events.set_timeline, set_timeline, self)
 end
 
 function final(self)
     self.druid:final()
+    events.unsubscribe(constants.events.set_timeline, set_timeline, self)
 end
 
 function update(self, dt)

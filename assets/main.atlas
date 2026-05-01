@@ -7,6 +7,8 @@ images {
 images {
   image: "/builtins/graphics/particle_blob.png"
 }
-margin: 0
+images {
+  image: "/assets/images/bear.png"
+  pivot_y: 1.0
+}
 extrude_borders: 2
-inner_padding: 0

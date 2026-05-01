@@ -1,0 +1,508 @@
+name: "level"
+instances {
+  id: "f24"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 750.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f13"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 500.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f27"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 750.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f2"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 250.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f7"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -250.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f6"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f3"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 250.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f4"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -250.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f21"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -750.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f14"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 500.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f25"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 750.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f19"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -500.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f8"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 250.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f12"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 500.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f11"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f23"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -750.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f9"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 250.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f1"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -250.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f10"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -250.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f18"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -500.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f16"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -500.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f22"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -750.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f20"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -750.0
+    z: -106.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f26"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 750.0
+    z: -356.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f5"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f17"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: -500.0
+    z: 143.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "f15"
+  prototype: "/assets/props/grig10x10.go"
+  position {
+    x: 500.0
+    z: 393.0
+  }
+  scale3 {
+    x: 5.0
+    y: 5.0
+    z: 5.0
+  }
+}
+instances {
+  id: "sun"
+  prototype: "/light_and_shadows/props/sun.go"
+  position {
+    x: -7.0
+    y: 10.0
+    z: 5.0
+  }
+  component_properties {
+    id: "sun"
+    properties {
+      id: "color"
+      value: "0.2, 0.2, 0.2, 0.0"
+      type: PROPERTY_TYPE_VECTOR4
+    }
+    properties {
+      id: "shadow"
+      value: "0.5, 0.5, 0.0, 0.0"
+      type: PROPERTY_TYPE_VECTOR4
+    }
+    properties {
+      id: "max_lights"
+      value: "0.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+}
+collection_instances {
+  id: "player"
+  collection: "/player/player.collection"
+}
+scale_along_z: 0
+embedded_instances {
+  id: "ground"
+  children: "f"
+  children: "f1"
+  children: "f10"
+  children: "f11"
+  children: "f12"
+  children: "f13"
+  children: "f14"
+  children: "f15"
+  children: "f16"
+  children: "f17"
+  children: "f18"
+  children: "f19"
+  children: "f2"
+  children: "f20"
+  children: "f21"
+  children: "f22"
+  children: "f23"
+  children: "f24"
+  children: "f25"
+  children: "f26"
+  children: "f27"
+  children: "f3"
+  children: "f4"
+  children: "f5"
+  children: "f6"
+  children: "f7"
+  children: "f8"
+  children: "f9"
+  data: ""
+}
+embedded_instances {
+  id: "cam_target"
+  children: "camera"
+  data: ""
+  rotation {
+    x: -0.38268343
+    w: 0.9238795
+  }
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: 10.0\\n"
+  "far_z: 600.0\\n"
+  "auto_aspect_ratio: 1\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    z: 140.0
+  }
+}
+embedded_instances {
+  id: "lights"
+  children: "sun"
+  data: ""
+}
+embedded_instances {
+  id: "root"
+  data: "components {\n"
+  "  id: \"lightsetting\"\n"
+  "  component: \"/light_and_shadows/light_setting.script\"\n"
+  "  properties {\n"
+  "    id: \"clear_color\"\n"
+  "    value: \"0.24, 0.24, 0.24, 0.0\"\n"
+  "    type: PROPERTY_TYPE_VECTOR4\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"fog_color\"\n"
+  "    value: \"0.24, 0.24, 0.24, 0.0\"\n"
+  "    type: PROPERTY_TYPE_VECTOR4\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"fog_density\"\n"
+  "    value: \"0.7\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"fog_min_max\"\n"
+  "    value: \"10.0, 600.0, 1.0, 1.0\"\n"
+  "    type: PROPERTY_TYPE_VECTOR4\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"ambient\"\n"
+  "    value: \"0.8, 0.8, 0.8, 0.0\"\n"
+  "    type: PROPERTY_TYPE_VECTOR4\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"color_max\"\n"
+  "    value: \"1.1\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"on\"\n"
+  "    value: \"true\"\n"
+  "    type: PROPERTY_TYPE_BOOLEAN\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"controller\"\n"
+  "  component: \"/scripts/scene_controller.script\"\n"
+  "  properties {\n"
+  "    id: \"cam_follow\"\n"
+  "    value: \"/player/player\"\n"
+  "    type: PROPERTY_TYPE_URL\n"
+  "  }\n"
+  "}\n"
+  ""
+}

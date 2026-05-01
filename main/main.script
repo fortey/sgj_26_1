@@ -22,7 +22,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == ahash.load_game then
-		monarch.show(ahash.main_menu)
-		--monarch.show(ahash.level)
+		--monarch.show(ahash.main_menu)
+		monarch.show(ahash.level)
 	end
 end

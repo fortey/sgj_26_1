@@ -64,7 +64,13 @@ function init(self)
             }
         },
         bear = {
-            urls = { msg.url("/player/bear") }
+            urls = { msg.url("/player/bear"),
+                msg.url("/player/bear_body"),
+                msg.url("/player/bear_arm_l"),
+                msg.url("/player/bear_arm_r"),
+                msg.url("/player/bear_head"),
+                msg.url("/player/bear_leg_l"),
+                msg.url("/player/bear_leg_r"), }
         }
     }
 

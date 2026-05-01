@@ -67,6 +67,7 @@ embedded_instances {
 embedded_instances {
   id: "girl"
   children: "body"
+  children: "shadow"
   data: ""
 }
 embedded_instances {
@@ -87,6 +88,10 @@ embedded_instances {
   "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
   "\"\n"
@@ -112,6 +117,10 @@ embedded_instances {
   "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
   "\"\n"
@@ -140,6 +149,10 @@ embedded_instances {
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "  position {\n"
   "    z: -0.001\n"
@@ -166,9 +179,13 @@ embedded_instances {
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "  position {\n"
-  "    z: 0.0015\n"
+  "    z: 0.002\n"
   "  }\n"
   "}\n"
   ""
@@ -196,9 +213,13 @@ embedded_instances {
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "  position {\n"
-  "    z: 0.0015\n"
+  "    z: 0.002\n"
   "  }\n"
   "}\n"
   ""
@@ -227,9 +248,13 @@ embedded_instances {
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "  position {\n"
-  "    z: 0.002\n"
+  "    z: 0.003\n"
   "  }\n"
   "}\n"
   ""
@@ -253,9 +278,13 @@ embedded_instances {
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "  position {\n"
-  "    z: 0.003\n"
+  "    z: 0.004\n"
   "  }\n"
   "}\n"
   ""
@@ -266,20 +295,204 @@ embedded_instances {
 }
 embedded_instances {
   id: "bear"
+  children: "bear_body"
+  data: ""
+}
+embedded_instances {
+  id: "shadow"
+  data: ""
+  rotation {
+    x: -0.5254717
+    w: 0.8508111
+  }
+}
+embedded_instances {
+  id: "bear_body"
+  children: "bear_arm_l"
+  children: "bear_arm_r"
+  children: "bear_head"
+  children: "bear_leg_l"
+  children: "bear_leg_r"
   data: "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"default_animation: \\\"bear\\\"\\n"
+  "  data: \"default_animation: \\\"bear_body\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "size {\\n"
-  "  x: 385.0\\n"
-  "  y: 467.0\\n"
+  "  x: 57.0\\n"
+  "  y: 59.0\\n"
   "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/assets/main.atlas\\\"\\n"
   "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    y: 286.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    y: -7.0
+  }
+}
+embedded_instances {
+  id: "bear_leg_l"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bear_leg\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 13.0\\n"
+  "  y: 26.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.001\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 37.0
+    y: 124.0
+  }
+}
+embedded_instances {
+  id: "bear_leg_r"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bear_leg\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 13.0\\n"
+  "  y: 26.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.001\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -60.0
+    y: 124.0
+  }
+}
+embedded_instances {
+  id: "bear_arm_l"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bear_arm\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 20.0\\n"
+  "  y: 32.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
   "}\n"
   ""
+  position {
+    x: 112.13333
+    y: 403.35385
+    z: -50.0
+  }
+  rotation {
+    z: -0.4488018
+    w: 0.89363134
+  }
+}
+embedded_instances {
+  id: "bear_arm_r"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bear_arm\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 20.0\\n"
+  "  y: 32.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: 0.002\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -118.066666
+    y: 388.35385
+  }
+  rotation {
+    z: -0.61106664
+    w: 0.7915792
+  }
+}
+embedded_instances {
+  id: "bear_head"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bear_head\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 143.0\\n"
+  "  y: 139.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: 0.002\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 4.200001
+    y: 422.57437
+  }
 }

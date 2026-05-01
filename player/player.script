@@ -9,6 +9,9 @@ local constants   = require("scripts.constants")
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
 
+local girl_state  = require("scripts.player_states.girl")
+local bear_state  = require("scripts.player_states.bear")
+
 local FRICTION    = 0.1
 local ACCEL       = 0.2
 local SPEED_MAX   = 0.45
@@ -31,18 +34,18 @@ local animations = {
 }
 
 local function change_form(self, form_key)
-    self.form = self.forms[form_key]
-    for key, form in pairs(self.forms) do
-        if key == form_key then
-            for index, url in ipairs(form.urls) do
-                msg.post(url, "enable")
-            end
-        else
-            for index, url in ipairs(form.urls) do
-                msg.post(url, "disable")
-            end
+    if self.form then
+        for index, url in ipairs(self.form.urls) do
+            msg.post(url, "disable")
         end
     end
+
+    self.form = self.forms[form_key]
+
+    for index, url in ipairs(self.form.urls) do
+        msg.post(url, "enable")
+    end
+
 
     if self.form[self.current_animation] then
         panthera.play(self.animation, self.form[self.current_animation], {
@@ -70,44 +73,27 @@ function init(self)
     self.jump_dt    = 0
 
     self.forms      = {
-        girl = {
-            key = "girl",
-            urls = { msg.url("/player/girl"),
-                msg.url("/player/body"),
-                msg.url("/player/arm_l"),
-                msg.url("/player/arm_r"),
-                msg.url("/player/leg_l"),
-                msg.url("/player/leg_r"),
-                msg.url("/player/head"),
-                msg.url("/player/pero"),
-            },
-            idle = "idle",
-            run = "run",
-            attack = "attack"
-        },
-        bear = {
-            key = "bear",
-            urls = { msg.url("/player/bear"),
-                msg.url("/player/bear_body"),
-                msg.url("/player/bear_arm_l"),
-                msg.url("/player/bear_arm_r"),
-                msg.url("/player/bear_head"),
-                msg.url("/player/bear_leg_l"),
-                msg.url("/player/bear_leg_r"), },
-            idle = "bear_idle",
-            run = "bear_run"
-        }
+        girl = girl_state,
+        bear = bear_state
     }
 
-    self.vfx        = msg.url("/player/vfx")
+    for key, form in pairs(self.forms) do
+        if key ~= "girl" then
+            for index, url in ipairs(form.urls) do
+                msg.post(url, "disable")
+            end
+        end
+    end
+
+    self.vfx = msg.url("/player/vfx")
     msg.post(self.vfx, "disable")
     self.animation         = panthera.create_go(animation)
     self.current_animation = animations.idle
     change_form(self, "girl")
 
-    -- msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
+    msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
     self.hero_id = 1
-    self.input = inputmapper.init(self, true, self.hero_id)
+    self.input = inputmapper.init(self, false, self.hero_id)
     self.view = msg.url("/player/view")
 
     print("Player init", msg.url())
@@ -116,10 +102,6 @@ function init(self)
     timer.delay(0, false, function()
         broadcast.send("REGISTER")
     end)
-
-    -- panthera.play(self.animation, "run", {
-    --     is_loop = true
-    -- })
 
     events.subscribe(constants.events.on_bear_click, on_bear, self)
 end
@@ -334,6 +316,12 @@ local function jump(self, pressed)
     self.prev_platform_pos = nil
 end
 
+local function attack(self, pressed)
+    if self.current_animation ~= animations.attack then
+        set_animation(self, animations.attack)
+    end
+end
+
 
 function on_input(self, action_id, action)
     if self.lock > 0 then return end
@@ -399,6 +387,6 @@ function fixed_update(self, dt)
     end
 
     if (self.input.is_pressed(h.FIRE)) then
-        print("fire")
+        --attack(self, true)
     end
 end

@@ -1,22 +1,22 @@
--- Binding module. 
+-- Binding module.
 -- Setup your controllers here. Keyboard, mouse, gamepad, virtual_stick
 
-local inputmapper = {}
-local input 	= require "in.state"
-local mapper	= require "in.mapper"
-local triggers 	= require "in.triggers"
+local inputmapper   = {}
+local input         = require "in.state"
+local mapper        = require "in.mapper"
+local triggers      = require "in.triggers"
 local virtual_stick = require 'helper.virtual_stick'
 
-local h = {}
-inputmapper.h = h
-h.LEFT = hash("LEFT")
-h.RIGHT = hash("RIGHT")
-h.UP = hash("UP")
-h.DOWN = hash("DOWN")
-h.JUMP = hash("jump")
-h.FIRE = hash("fire")
-h.UNIT = hash("unit")
-h.DEFAULT = hash("default")
+local h             = {}
+inputmapper.h       = h
+h.LEFT              = hash("LEFT")
+h.RIGHT             = hash("RIGHT")
+h.UP                = hash("UP")
+h.DOWN              = hash("DOWN")
+h.JUMP              = hash("jump")
+h.FIRE              = hash("fire")
+h.UNIT              = hash("unit")
+h.DEFAULT           = hash("default")
 
 function inputmapper.init(self, acquire, id)
 	local i = input.create()
@@ -37,11 +37,11 @@ function inputmapper.init(self, acquire, id)
 	mapper.bind(triggers.GAMEPAD_LPAD_DOWN, h.DOWN, id)
 	mapper.bind(triggers.GAMEPAD_RPAD_DOWN, h.JUMP, id)
 	mapper.bind(triggers.GAMEPAD_RPAD_LEFT, h.FIRE, id)
-	-- mapper.bind(triggers.MOUSE_BUTTON_LEFT, h.FIRE, id)
+	mapper.bind(triggers.MOUSE_BUTTON_1, h.FIRE, id)
 	-- mapper.bind(triggers.MOUSE_BUTTON_RIGHT, h.DODGE, id)
 
-	if acquire then 
-		i.acquire() 
+	if acquire then
+		i.acquire()
 	end
 	-- i.clear()
 	return i
@@ -61,16 +61,15 @@ inputmapper.input = 0
 inputmapper.dx = 0
 inputmapper.dy = 0
 inputmapper.gamepad_active = false
-	
+
 function inputmapper.on_message(self, message_id, message, sender, fmap)
-	
-	local ret = false 
+	local ret = false
 	-- VIRTUAL pad messages:
 	if message_id == virtual_stick.ANALOG then
 		-- update state of all directions in one message
 		local threshold = 0.2
 		message.pressed = message.x < -threshold
-		message.released = not message.pressed 
+		message.released = not message.pressed
 		-- There is no repeat state at in.state module, so we can just turn on/off for each KEY
 		self.input.on_input(h.LEFT, message)
 
@@ -105,16 +104,15 @@ function inputmapper.on_message(self, message_id, message, sender, fmap)
 end
 
 function inputmapper.on_input(self, action_id, action, fmap)
-
 	local mapped_action_id = mapper.on_input(action_id, self.hero_id)
 
-	if not (action_id == triggers.MOUSE_BUTTON_LEFT) then 
+	if not (action_id == triggers.MOUSE_BUTTON_LEFT) then
 		self.input.on_input(mapped_action_id, action)
 		inputmapper.dx = 1
 		inputmapper.dy = 1
 		inputmapper.input = inputmapper.KEYBOARD
 	end
-	
+
 	if triggers.is_gamepad(action_id) then
 		inputmapper.gamepad_active = true
 	else
@@ -122,28 +120,25 @@ function inputmapper.on_input(self, action_id, action, fmap)
 	end
 	local threshold = 0.45
 
-	if  action_id == triggers.GAMEPAD_LSTICK_LEFT then
+	if action_id == triggers.GAMEPAD_LSTICK_LEFT then
 		action.pressed = action.value > threshold
 		action.released = not action.pressed
 		self.input.on_input(h.LEFT, action)
 		inputmapper.dx = math.abs(action.value)
 		inputmapper.input = inputmapper.VIRTUAL
-
-	elseif  action_id == triggers.GAMEPAD_LSTICK_RIGHT then
+	elseif action_id == triggers.GAMEPAD_LSTICK_RIGHT then
 		action.pressed = action.value > threshold
 		action.released = not action.pressed
 		self.input.on_input(h.RIGHT, action)
 		inputmapper.dx = math.abs(action.value)
 		inputmapper.input = inputmapper.VIRTUAL
-
-	elseif  action_id == triggers.GAMEPAD_LSTICK_UP then
+	elseif action_id == triggers.GAMEPAD_LSTICK_UP then
 		action.pressed = action.value > threshold
 		action.released = not action.pressed
 		self.input.on_input(h.UP, action)
 		inputmapper.dy = math.abs(action.value)
 		inputmapper.input = inputmapper.VIRTUAL
-
-	elseif  action_id == triggers.GAMEPAD_LSTICK_DOWN then
+	elseif action_id == triggers.GAMEPAD_LSTICK_DOWN then
 		action.pressed = action.value > threshold
 		action.released = not action.pressed
 		self.input.on_input(h.DOWN, action)
@@ -154,7 +149,6 @@ function inputmapper.on_input(self, action_id, action, fmap)
 	if action.released and fmap[mapped_action_id] then
 		fmap[mapped_action_id](self)
 	end
-
 end
 
 function inputmapper.gamepad_lookat(self)
@@ -167,12 +161,19 @@ function inputmapper.gamepad_lookat(self)
 	end
 	if self.input.is_pressed(h.UP) then
 		self.look_at.z = self.position.z - 10
-		if not self.input.is_pressed(h.LEFT) and not self.input.is_pressed(h.RIGHT) then self.look_at.x = self.position.x end
+		if not self.input.is_pressed(h.LEFT) and not self.input.is_pressed(h.RIGHT) then
+			self.look_at.x = self.position
+				.x
+		end
 	elseif self.input.is_pressed(h.DOWN) then
 		self.look_at.z = self.position.z + 10
-		if not self.input.is_pressed(h.LEFT) and not self.input.is_pressed(h.RIGHT) then self.look_at.x = self.position.x end
+		if not self.input.is_pressed(h.LEFT) and not self.input.is_pressed(h.RIGHT) then
+			self.look_at.x = self.position
+				.x
+		end
 	else
 		self.look_at.z = self.position.z
 	end
 end
+
 return inputmapper

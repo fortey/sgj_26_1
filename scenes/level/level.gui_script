@@ -9,6 +9,8 @@ function init(self)
     self.button_bear = self.druid:new_button("bear", function()
         events.trigger(constants.events.on_bear_click)
     end)
+    msg.post(".", "release_input_focus")
+    msg.post("#", "postinit")
 end
 
 function final(self)
@@ -21,6 +23,9 @@ end
 
 function on_message(self, message_id, message, sender)
     self.druid:on_message(message_id, message, sender)
+    if message_id == hash("postinit") then
+        msg.post(".", "acquire_input_focus")
+    end
 end
 
 function on_input(self, action_id, action)

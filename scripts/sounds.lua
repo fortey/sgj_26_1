@@ -1,7 +1,10 @@
 local M = {}
 
 function M:init()
-    
+    self.music = msg.url("/sounds#music")
+    self.bear = msg.url("/sounds#bear")
+    self.eagle = msg.url("/sounds#eagle")
+    self.loot = msg.url("/sounds#loot")
 end
 
 function M:play(sound_url, properties)

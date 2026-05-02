@@ -68,4 +68,7 @@ images {
 images {
   image: "/assets/images/items/crystal.png"
 }
+images {
+  image: "/assets/images/girl/girl_knife.png"
+}
 extrude_borders: 2

@@ -191,10 +191,31 @@ embedded_instances {
   "    z: 0.002\n"
   "  }\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite1\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"girl_knife\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/main.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 25.902756\n"
+  "    y: -17.292986\n"
+  "    z: 2.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    z: -0.3344253\n"
+  "    w: 0.9424223\n"
+  "  }\n"
+  "}\n"
   ""
   position {
     x: 21.133335
     y: 47.35386
+    z: 5.0
   }
   rotation {
     z: 0.24361502
@@ -229,6 +250,7 @@ embedded_instances {
   position {
     x: -17.066666
     y: 47.35386
+    z: 5.0
   }
   rotation {
     z: -0.06104854
@@ -517,13 +539,18 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
+  "    x: -37.0\n"
   "    z: 20.0\n"
   "  }\n"
   "}\n"
   ""
   position {
-    x: 114.0
+    x: 82.0
     y: 105.0
+  }
+  rotation {
+    x: -0.25881904
+    w: 0.9659258
   }
 }
 embedded_instances {

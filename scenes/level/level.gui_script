@@ -32,17 +32,26 @@ local function take_crystal(self, hp, position)
     end)
 end
 
+local function set_form_cooldown(self, key, cooldown)
+    self[key].button:set_enabled(false)
+end
+
 function init(self)
     self.druid = druid.new(self)
 
-    self.button_bear = self.druid:new_button("bear", function()
-        events.trigger(constants.events.on_form_click, "bear")
-    end)
+    self.bear = {
+        button = self.druid:new_button("bear", function()
+            events.trigger(constants.events.on_form_click, "bear")
+        end),
+        timer = gui.get_node("bear_timer")
+    }
 
-    self.button_eagle = self.druid:new_button("eagle", function()
-        events.trigger(constants.events.on_form_click, "eagle")
-    end)
-
+    self.eagle = {
+        button = self.druid:new_button("eagle", function()
+            events.trigger(constants.events.on_form_click, "eagle")
+        end),
+        timer = gui.get_node("eagle_timer")
+    }
     self.hearts = {}
     for i = 1, 5 do
         self.hearts[i] = gui.get_node("heart" .. i)
@@ -61,6 +70,7 @@ function init(self)
     events.subscribe(constants.events.set_timeline, set_timeline, self)
     events.subscribe(constants.events.on_damage, on_damage, self)
     events.subscribe(constants.events.take_crystal, take_crystal, self)
+    events.subscribe(constants.events.form_cooldown, set_form_cooldown, self)
 end
 
 function final(self)
@@ -68,6 +78,7 @@ function final(self)
     events.unsubscribe(constants.events.set_timeline, set_timeline, self)
     events.unsubscribe(constants.events.on_damage, on_damage, self)
     events.unsubscribe(constants.events.take_crystal, take_crystal, self)
+    events.unsubscribe(constants.events.form_cooldown, set_form_cooldown, self)
 end
 
 function update(self, dt)

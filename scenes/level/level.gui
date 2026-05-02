@@ -156,6 +156,15 @@ nodes {
   size_mode: SIZE_MODE_AUTO
 }
 nodes {
+  type: TYPE_BOX
+  texture: "gui/crystal"
+  id: "crystal_prefab"
+  parent: "hearts"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  enabled: false
+}
+nodes {
   position {
     y: 540.0
   }

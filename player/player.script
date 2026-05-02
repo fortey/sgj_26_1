@@ -5,6 +5,7 @@ local broadcast   = require "helper.broadcast"
 local common      = require 'helper.common'
 local events      = require("event.events")
 local constants   = require("scripts.constants")
+local ahash       = require "ahash.ahash"
 
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
@@ -32,6 +33,21 @@ local animations  = {
     fall   = "fall",
     attack = "attack"
 }
+
+local function take_damage(self)
+    self.hp = math.max(0, self.hp - 1)
+    events.trigger(constants.events.on_damage, self.hp)
+end
+
+local function take_item(self, item_id)
+    local key = go.get(msg.url(nil, item_id, "item"), "key")
+    if key == ahash.crystal then
+        self.hp = math.min(5, self.hp + 1)
+        local x, y, z = common.world_to_screen(self.position, "/camera#camera")
+        events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
+        go.delete(item_id)
+    end
+end
 
 local function change_form(self, form_key)
     if self.form then
@@ -122,6 +138,10 @@ function init(self)
     end)
 
     events.subscribe(constants.events.on_form_click, on_form, self)
+
+    timer.delay(1, false, function()
+        take_damage(self)
+    end)
 end
 
 function final(self)
@@ -277,6 +297,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == contact_point_response then
         collision(self, message)
     elseif message_id == trigger_response then
+        if message.group == ahash.item and message.enter then
+            take_item(self, message.other_id)
+        end
     end
 end
 

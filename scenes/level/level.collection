@@ -386,6 +386,13 @@ instances {
     }
   }
 }
+instances {
+  id: "crystal"
+  prototype: "/prefabs/crystal.go"
+  position {
+    x: 20.0
+  }
+}
 collection_instances {
   id: "player"
   collection: "/player/player.collection"

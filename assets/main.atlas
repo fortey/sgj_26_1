@@ -65,4 +65,7 @@ images {
   pivot_x: 0.922154
   pivot_y: 0.692175
 }
+images {
+  image: "/assets/images/items/crystal.png"
+}
 extrude_borders: 2

@@ -13,4 +13,7 @@ images {
 images {
   image: "/assets/images/ui/eagle.png"
 }
+images {
+  image: "/assets/images/items/crystal.png"
+}
 extrude_borders: 2

@@ -14,6 +14,7 @@ M.run                  = { key = "eagle_idle", opts = { is_loop = true } }
 M.time                 = 5
 M.ascend_speed         = 0.8
 M.flight_height_offset = 20
+M.cooldown             = 20
 
 function M:enter(player)
     player.flight_target_y = self.flight_height_offset

@@ -1,0 +1,53 @@
+go.property("damage", 1)
+go.property("time_to_attack_after_start", 0.5)
+
+local ahash = require "ahash.ahash"
+local trigger_response = hash("trigger_response")
+local sounds = require("scripts.sounds")
+
+local function start_attack(self)
+	msg.post(".", "enable")
+	go.set(".", "scale", 0.01)
+	go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.0, 1.0, 1.0), go.EASING_LINEAR, 0.1)
+	sounds:play("#jotun_attack_sfx", { speed = math.random(90, 110)/100 })
+end
+
+local function reset_attack(self)
+	self.time_elapsed = 0.0
+	self.attack_target_id = nil
+	self.was_damage = false
+end
+
+local function end_attack(self)
+	reset_attack(self)
+	msg.post(".", "disable")
+end
+
+function init(self)
+	reset_attack(self)
+	go.animate("#attack_view", "u_brightness_time", go.PLAYBACK_LOOP_PINGPONG, vmath.vector4(3.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 3.0)
+	go.animate("#attack_view", "u_waving_time", go.PLAYBACK_LOOP_FORWARD, vmath.vector4(6.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 0.5)
+end
+
+function fixed_update(self, dt)
+	if self.attack_target_id and not self.was_damage then
+		self.time_elapsed = self.time_elapsed + dt
+		if self.time_elapsed >= self.time_to_attack_after_start then
+			msg.post(self.attack_target_id, hash("attack"), { damage = self.damage })
+			self.time_elapsed = 0
+			self.was_damage = true
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == trigger_response and message.other_group == ahash.player then
+		if message.enter then
+			self.attack_target_id = message.other_id
+		end
+	elseif message_id == ahash.start_attack then
+		start_attack(self)
+	elseif message_id == ahash.end_attack then
+		end_attack(self)
+	end
+end

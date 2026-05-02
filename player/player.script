@@ -331,7 +331,7 @@ function on_message(self, message_id, message, sender)
             --         self.targets[message.other_id] = nil
             --     end
         elseif message.own_group == ahash.player_attack and message.enter then
-            msg.post(message.other_id, ahash.attack, { damage = self.form.damage })
+            msg.post(message.other_id, ahash.attack, { damage = self.form.attack_damage })
         end
     elseif message_id == ahash.attack_trigger then
         if message.enter then

@@ -63,6 +63,12 @@ fragment_constants {
   value {
   }
 }
+fragment_constants {
+  name: "u_hit"
+  type: CONSTANT_TYPE_USER
+  value {
+  }
+}
 samplers {
   name: "tex0"
   wrap_u: WRAP_MODE_CLAMP_TO_EDGE

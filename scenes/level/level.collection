@@ -704,25 +704,6 @@ embedded_instances {
   ""
 }
 embedded_instances {
-  id: "pathfinding_map"
-  data: "components {\n"
-  "  id: \"level\"\n"
-  "  component: \"/scenes/level/level.tilemap\"\n"
-  "}\n"
-  "components {\n"
-  "  id: \"pathfinding_controller\"\n"
-  "  component: \"/scenes/level/pathfinding_controller.script\"\n"
-  "}\n"
-  ""
-  position {
-    y: -75.0
-  }
-  rotation {
-    x: 0.70710677
-    w: 0.70710677
-  }
-}
-embedded_instances {
   id: "collectibles_factory"
   data: "embedded_components {\n"
   "  id: \"crystals_factory\"\n"

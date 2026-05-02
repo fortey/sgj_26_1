@@ -1,5 +1,7 @@
 images {
   image: "/assets/images/enemies/jotun/jotun.png"
+  pivot_x: 0.524968
+  pivot_y: 0.956782
 }
 images {
   image: "/assets/images/enemies/jotun/jotun_attack_vfx.png"

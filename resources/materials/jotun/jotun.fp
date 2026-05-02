@@ -13,6 +13,7 @@ uniform mediump sampler2D tex1;
 
 uniform MaterialData {
     mediump vec4 u_melting_degree;
+    mediump vec4 u_hit;
 };
 
 #include "/light_and_shadows/materials/fun.glsl"
@@ -63,6 +64,11 @@ void main()
 
         color = blurred_color * tint_pm;
         color.a *= edge_alpha;
+    }
+    else if (u_hit.x > 0)
+    {
+        color = texture(tex0, texcoord)*tint_pm;
+        color = color + vec4(vec3(u_hit.x), 0.0) * step(0.01, color.a);
     }
     else
     {

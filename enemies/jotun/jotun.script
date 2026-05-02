@@ -15,6 +15,7 @@ local MIN = -30
 
 local contact_point_response = hash("contact_point_response")
 local trigger_response = hash("trigger_response")
+local sounds = require("scripts.sounds")
 
 function init(self)
 	self.velocity = vmath.vector3()
@@ -33,6 +34,8 @@ function init(self)
 	self.current_path = nil
 	self.target_index = -1
 	self.current_tile_coords = nil
+	self.movement_sfx_playing = false
+	self.id = go.get_id()
 end
 
 local function flip_view(self)
@@ -79,12 +82,7 @@ local function other_enemy_collision_handler(self, message)
 end
 
 local function on_attack_finish_animation_end(self, url, property)
-	msg.post(self.attack_go, "disable")
-end
-
-local function interrupt_attack(self)
-	self.in_attack_in_progress = false
-	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
+	msg.post(self.attack_go, "end_attack")
 end
 
 local function end_attack(self)
@@ -96,9 +94,7 @@ end
 
 local function start_attack(self)
 	self.in_attack_in_progress = true
-	msg.post(self.attack_go, "enable")
-	go.set(self.attack_go, "scale", 0.01)
-	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.0, 1.0, 1.0), go.EASING_LINEAR, 0.1)
+	msg.post(self.attack_go, "start_attack")
 end
 
 local function try_to_attack(self, dt)
@@ -113,13 +109,9 @@ local function try_to_attack(self, dt)
 	end
 
 	if not self.in_attack_distance then
-		self.attack_time_elapsed = math.max(self.attack_time_elapsed - dt, 0.0)
-		if self.in_attack_in_progress then
-			interrupt_attack(self)
-		end
 		return
 	end
-
+	
 	if not self.in_attack_in_progress then
 		start_attack(self)
 		return
@@ -303,6 +295,7 @@ local function move(self, dt)
 	local pos = self.position + move_dt
 	go.set_position(pos)
 	self.position = pos
+	return vmath.length_sqr(move_dt) > 0.00001
 end
 
 local function gravitation(self, dt)
@@ -314,9 +307,19 @@ local function gravitation(self, dt)
 end
 
 function fixed_update(self, dt)
-	--try_move_to_target(self, dt)
-	try_to_move(self, dt)
-	move(self, dt)
+	if not self.in_attack_in_progress then
+		try_move_to_target(self, dt)
+		--try_to_move(self, dt)
+		
+		if move(self, dt) and not self.movement_sfx_playing then
+			local t = go.get_scale() / 0.04
+			sounds:play(self.sfx_id, { speed = go.get_scale().x / 0.04 })
+			self.movement_sfx_playing = true
+		end
+	else
+		self.movement_sfx_playing = false
+		sounds:stop(self.sfx_id)
+	end
 	flip_view(self)
 	gravitation(self, dt)
 
@@ -332,6 +335,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("INIT") then
 		self.view = message.view_id
 		self.attack_go = message.attack_view_id
+		self.sfx_id = message.sfx_id
 		msg.post(self.attack_go, "disable")
 	end
 end

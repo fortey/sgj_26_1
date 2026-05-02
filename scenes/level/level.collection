@@ -635,6 +635,9 @@ embedded_instances {
   "  component: \"/scenes/level/pathfinding_controller.script\"\n"
   "}\n"
   ""
+  position {
+    y: -75.0
+  }
   rotation {
     x: 0.70710677
     w: 0.70710677

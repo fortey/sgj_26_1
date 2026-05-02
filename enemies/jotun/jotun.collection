@@ -3,13 +3,14 @@ scale_along_z: 0
 embedded_instances {
   id: "jotun"
   children: "attack"
+  children: "sfx"
   children: "views"
   data: "components {\n"
   "  id: \"jotun\"\n"
   "  component: \"/enemies/jotun/jotun.script\"\n"
   "  properties {\n"
   "    id: \"squared_distance_to_attack\"\n"
-  "    value: \"500.0\"\n"
+  "    value: \"600.0\"\n"
   "    type: PROPERTY_TYPE_NUMBER\n"
   "  }\n"
   "}\n"
@@ -57,7 +58,7 @@ embedded_instances {
   "    shape_type: TYPE_CAPSULE\\n"
   "    position {\\n"
   "      x: 9.0\\n"
-  "      y: 211.0\\n"
+  "      y: 10.0\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -68,8 +69,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: -130.0\\n"
-  "      y: 404.0\\n"
+  "      x: 3.0\\n"
+  "      y: 19.0\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -159,8 +160,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: -153.1276\\n"
-  "      y: -124.36214\\n"
+  "      x: -108.195015\\n"
+  "      y: -63.58333\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -173,6 +174,14 @@ embedded_instances {
   "event_contact: false\\n"
   "\"\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"jotun_attack_sfx\"\n"
+  "  type: \"sound\"\n"
+  "  data: \"sound: \\\"/assets/sounds/enemies/WinterDemonAttack.ogg\\\"\\n"
+  "group: \\\"effects\\\"\\n"
+  "speed: 1.2\\n"
+  "\"\n"
+  "}\n"
   ""
   position {
     x: -151.0
@@ -182,4 +191,16 @@ embedded_instances {
     z: 0.16297296
     w: 0.98663056
   }
+}
+embedded_instances {
+  id: "sfx"
+  data: "embedded_components {\n"
+  "  id: \"jotun_walking\"\n"
+  "  type: \"sound\"\n"
+  "  data: \"sound: \\\"/assets/sounds/enemies/WinterDemonWalk.ogg\\\"\\n"
+  "looping: 1\\n"
+  "group: \\\"effects\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
 }

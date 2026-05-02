@@ -306,6 +306,8 @@ function on_message(self, message_id, message, sender)
         if message.group == ahash.item and message.enter then
             take_item(self, message.other_id)
         end
+    elseif message_id == hash("attack") then
+        take_damage(self)
     end
 end
 

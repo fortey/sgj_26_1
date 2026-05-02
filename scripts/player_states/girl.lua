@@ -9,11 +9,13 @@ M.urls = { msg.url("level:/player/girl"),
     msg.url("level:/player/leg_r"),
     msg.url("level:/player/head"),
     msg.url("level:/player/pero"),
+    msg.url("level", "/player/player", "co"),
 }
 M.idle = { key = "idle", opts = { is_loop = true } }
 M.run = { key = "run", opts = { is_loop = true } }
 M.attack = { key = "attack" }
 M.attack_vfx = "vfx_knife"
 M.attack_time = 0.5
+M.speed = 0.45
 
 return M

@@ -48,7 +48,14 @@ local function take_item(self, item_id)
         events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
         go.delete(item_id)
     end
-    sounds:play(sounds.loot)
+    sounds:play(sounds.loot_up)
+end
+
+local function take_form(self, form_key)
+    local x, y, z = common.world_to_screen(self.position, "/camera#camera")
+    events.trigger(constants.events.take_form, form_key, { sx = x, sy = y })
+
+    sounds:play(sounds.loot_up)
 end
 
 local function change_form(self, form_key)
@@ -72,6 +79,7 @@ local function change_form(self, form_key)
 
     self.form = self.forms[form_key]
 
+    self.max_speed = self.form.speed
     for index, url in ipairs(self.form.urls) do
         msg.post(url, "enable")
     end
@@ -150,6 +158,10 @@ function init(self)
 
     timer.delay(1, false, function()
         take_damage(self)
+        take_form(self, "bear")
+    end)
+    timer.delay(2, false, function()
+        take_form(self, "eagle")
     end)
 end
 
@@ -445,27 +457,27 @@ function fixed_update(self, dt)
 
     if self.input.is_pressed(h.LEFT) then
         self.move.x = self.move.x - ACCEL * dx
-        if self.move.x < -SPEED_MAX then self.move.x = -SPEED_MAX end
+        if self.move.x < -self.max_speed then self.move.x = -self.max_speed end
         self.dir.x = -1
     elseif self.input.is_pressed(h.RIGHT) then
         self.move.x = self.move.x + ACCEL * dx
-        if self.move.x > SPEED_MAX then self.move.x = SPEED_MAX end
+        if self.move.x > self.max_speed then self.move.x = self.max_speed end
         self.dir.x = 1
     end
     if self.input.is_pressed(h.UP) then
         self.move.z = self.move.z - ACCEL * dy
-        if self.move.z < -SPEED_MAX then self.move.z = -SPEED_MAX end
+        if self.move.z < -self.max_speed then self.move.z = -self.max_speed end
         self.dir.z = -1
     elseif self.input.is_pressed(h.DOWN) then
         self.move.z = self.move.z + ACCEL * dy
-        if self.move.z > SPEED_MAX then self.move.z = SPEED_MAX end
+        if self.move.z > self.max_speed then self.move.z = self.max_speed end
         self.dir.z = 1
     end
 
     -- Ограничиваем максимальную скорость
     local speed = math.sqrt(self.move.x ^ 2 + self.move.z ^ 2)
-    if speed > SPEED_MAX then
-        local scale = SPEED_MAX / speed
+    if speed > self.max_speed then
+        local scale = self.max_speed / speed
         self.move.x = self.move.x * scale
         self.move.z = self.move.z * scale
     end

@@ -5,6 +5,7 @@ M.events = {
     set_timeline = "set_timeline",
     on_damage = "on_damage",
     take_crystal = "take_crystal",
+    take_form = "take_form",
     form_cooldown = "form_cooldown"
 }
 

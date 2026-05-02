@@ -1,11 +1,11 @@
 script: "/scenes/level/level.gui_script"
-textures {
-  name: "gui"
-  texture: "/assets/gui.atlas"
-}
 fonts {
   name: "basic"
   font: "/builtins/fonts/default.font"
+}
+textures {
+  name: "gui"
+  texture: "/assets/gui.atlas"
 }
 nodes {
   position {
@@ -79,11 +79,9 @@ nodes {
     y: -40.0
   }
   type: TYPE_TEXT
+  font: "basic"
   id: "bear_cooldown_text"
   parent: "panel"
-  text: ""
-  font: "basic"
-  size_mode: SIZE_MODE_AUTO
 }
 nodes {
   position {
@@ -91,11 +89,22 @@ nodes {
     y: -40.0
   }
   type: TYPE_TEXT
+  font: "basic"
   id: "eagle_cooldown_text"
   parent: "panel"
-  text: ""
-  font: "basic"
+}
+nodes {
+  position {
+    x: -12.0
+    y: -10.0
+  }
+  type: TYPE_BOX
+  texture: "gui/bear"
+  id: "form_prefab"
+  parent: "panel"
+  inherit_alpha: true
   size_mode: SIZE_MODE_AUTO
+  enabled: false
 }
 nodes {
   position {

@@ -9,6 +9,7 @@ M.urls        = { msg.url("level:/player/bear"),
     msg.url("level:/player/bear_head"),
     msg.url("level:/player/bear_leg_l"),
     msg.url("level:/player/bear_leg_r"),
+    msg.url("level", "/player/player", "co_bear"),
     M.attack_trigger
 }
 M.idle        = { key = "bear_idle", opts = { is_loop = true } }
@@ -20,6 +21,7 @@ M.attack_damage = 2
 M.attack_trigger = msg.url("level:/player/player#bear_attack_trigger")
 M.time        = 10
 M.cooldown    = 20
+M.speed       = 0.30
 
 function M:enter(player)
     sounds:play(sounds.bear)

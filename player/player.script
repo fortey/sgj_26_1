@@ -48,7 +48,14 @@ local function take_item(self, item_id)
         events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
         go.delete(item_id)
     end
-    sounds:play(sounds.loot)
+    sounds:play(sounds.loot_up)
+end
+
+local function take_form(self, form_key)
+    local x, y, z = common.world_to_screen(self.position, "/camera#camera")
+    events.trigger(constants.events.take_form, form_key, { sx = x, sy = y })
+
+    sounds:play(sounds.loot_up)
 end
 
 local function change_form(self, form_key)
@@ -72,6 +79,7 @@ local function change_form(self, form_key)
 
     self.form = self.forms[form_key]
 
+    self.max_speed = self.form.speed
     for index, url in ipairs(self.form.urls) do
         msg.post(url, "enable")
     end
@@ -136,14 +144,25 @@ function init(self)
     self.hero_id = 1
     self.input = inputmapper.init(self, false, self.hero_id)
     self.view = msg.url("/player/view")
+    self.attack_trigger = msg.url("/player/attack_trig")
 
     self.position = go.get_position()
+
+    self.targets = {}
 
     timer.delay(0, false, function()
         broadcast.send("REGISTER")
     end)
 
     events.subscribe(constants.events.on_form_click, on_form, self)
+
+    timer.delay(1, false, function()
+        take_damage(self)
+        take_form(self, "bear")
+    end)
+    timer.delay(2, false, function()
+        take_form(self, "eagle")
+    end)
     
     msg.post(self.form.attack_trigger, "disable")
 end
@@ -161,9 +180,11 @@ local function flip_view(self)
     if self.dir.x == -1 then
         --sprite.set_hflip(self.sprite, true)
         go.set(self.view, "scale.x", -1)
+        go.set(self.attack_trigger, "position.x", -2.7)
     else
         --sprite.set_hflip(self.sprite, false)
         go.set(self.view, "scale.x", 1)
+        go.set(self.attack_trigger, "position.x", 2.7)
     end
 end
 
@@ -303,8 +324,20 @@ function on_message(self, message_id, message, sender)
     elseif message_id == trigger_response then
         if message.group == ahash.item and message.enter then
             take_item(self, message.other_id)
-        elseif message.own_group == ahash.player_attack and message.other_group == ahash.enemy and message.enter then
-            msg.post(message.other_id, ahash.attack, { damage = self.form.attack_damage })
+            -- elseif message.group == ahash.enemy then
+            --     if message.enter then
+            --         self.targets[message.other_id] = true
+            --     else
+            --         self.targets[message.other_id] = nil
+            --     end
+        elseif message.own_group == ahash.player_attack and message.enter then
+            msg.post(message.other_id, ahash.attack, { damage = self.form.damage })
+        end
+    elseif message_id == ahash.attack_trigger then
+        if message.enter then
+            self.targets[message.other_id] = true
+        else
+            self.targets[message.other_id] = nil
         end
     elseif message_id == ahash.attack then
         take_damage(self)
@@ -380,12 +413,15 @@ local function attack(self, pressed)
         if self.form.attack_vfx then
             timer.delay(0.1, false, function()
                 sprite.play_flipbook(self.vfx, self.form.attack_vfx)
-                local t = go.get_id()
                 msg.post(self.form.attack_trigger, "enable")
                 timer.delay(0.2, false, function()
                     sprite.play_flipbook(self.vfx, "empty")
                     msg.post(self.form.attack_trigger, "disable")
                 end)
+
+                for enemy_id, value in pairs(self.targets) do
+
+                end
             end)
         end
         timer.delay(self.form.attack_time, false, function()
@@ -429,27 +465,27 @@ function fixed_update(self, dt)
 
     if self.input.is_pressed(h.LEFT) then
         self.move.x = self.move.x - ACCEL * dx
-        if self.move.x < -SPEED_MAX then self.move.x = -SPEED_MAX end
+        if self.move.x < -self.max_speed then self.move.x = -self.max_speed end
         self.dir.x = -1
     elseif self.input.is_pressed(h.RIGHT) then
         self.move.x = self.move.x + ACCEL * dx
-        if self.move.x > SPEED_MAX then self.move.x = SPEED_MAX end
+        if self.move.x > self.max_speed then self.move.x = self.max_speed end
         self.dir.x = 1
     end
     if self.input.is_pressed(h.UP) then
         self.move.z = self.move.z - ACCEL * dy
-        if self.move.z < -SPEED_MAX then self.move.z = -SPEED_MAX end
+        if self.move.z < -self.max_speed then self.move.z = -self.max_speed end
         self.dir.z = -1
     elseif self.input.is_pressed(h.DOWN) then
         self.move.z = self.move.z + ACCEL * dy
-        if self.move.z > SPEED_MAX then self.move.z = SPEED_MAX end
+        if self.move.z > self.max_speed then self.move.z = self.max_speed end
         self.dir.z = 1
     end
 
     -- Ограничиваем максимальную скорость
     local speed = math.sqrt(self.move.x ^ 2 + self.move.z ^ 2)
-    if speed > SPEED_MAX then
-        local scale = SPEED_MAX / speed
+    if speed > self.max_speed then
+        local scale = self.max_speed / speed
         self.move.x = self.move.x * scale
         self.move.z = self.move.z * scale
     end

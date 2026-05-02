@@ -689,6 +689,15 @@ return {
                 animation_id = "attack",
                 animation_keys = {
                     {
+                        duration = 0.1,
+                        easing = "outsine",
+                        end_value = 83.2,
+                        key_type = "tween",
+                        node_id = "arm_l",
+                        property_id = "rotation_z",
+                        start_value = 28.200000762939,
+                    },
+                    {
                         data = "main/vfx_knife",
                         easing = "linear",
                         key_type = "trigger",
@@ -696,6 +705,26 @@ return {
                         property_id = "texture",
                         start_data = "main/empty",
                         start_time = 0.1,
+                    },
+                    {
+                        duration = 0.1,
+                        easing = "outsine",
+                        end_value = -41.8,
+                        key_type = "tween",
+                        node_id = "arm_l",
+                        property_id = "rotation_z",
+                        start_time = 0.1,
+                        start_value = 83.2,
+                    },
+                    {
+                        duration = 0.3,
+                        easing = "outsine",
+                        end_value = 28,
+                        key_type = "tween",
+                        node_id = "arm_l",
+                        property_id = "rotation_z",
+                        start_time = 0.2,
+                        start_value = -41.8,
                     },
                     {
                         data = "main/empty",

@@ -3,6 +3,10 @@ textures {
   name: "gui"
   texture: "/assets/gui.atlas"
 }
+fonts {
+  name: "basic"
+  font: "/builtins/fonts/default.font"
+}
 nodes {
   position {
     x: 960.0
@@ -67,6 +71,30 @@ nodes {
   id: "eagle"
   parent: "panel"
   inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -12.0
+    y: -40.0
+  }
+  type: TYPE_TEXT
+  id: "bear_cooldown_text"
+  parent: "panel"
+  text: ""
+  font: "basic"
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 116.0
+    y: -40.0
+  }
+  type: TYPE_TEXT
+  id: "eagle_cooldown_text"
+  parent: "panel"
+  text: ""
+  font: "basic"
   size_mode: SIZE_MODE_AUTO
 }
 nodes {

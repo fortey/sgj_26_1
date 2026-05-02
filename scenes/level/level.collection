@@ -367,24 +367,6 @@ instances {
     y: 10.0
     z: 5.0
   }
-  component_properties {
-    id: "sun"
-    properties {
-      id: "color"
-      value: "0.2, 0.2, 0.2, 0.0"
-      type: PROPERTY_TYPE_VECTOR4
-    }
-    properties {
-      id: "shadow"
-      value: "0.5, 0.5, 0.0, 0.0"
-      type: PROPERTY_TYPE_VECTOR4
-    }
-    properties {
-      id: "max_lights"
-      value: "0.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
 }
 collection_instances {
   id: "player"
@@ -468,41 +450,6 @@ embedded_instances {
   data: "components {\n"
   "  id: \"lightsetting\"\n"
   "  component: \"/light_and_shadows/light_setting.script\"\n"
-  "  properties {\n"
-  "    id: \"clear_color\"\n"
-  "    value: \"0.24, 0.24, 0.24, 0.0\"\n"
-  "    type: PROPERTY_TYPE_VECTOR4\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"fog_color\"\n"
-  "    value: \"0.24, 0.24, 0.24, 0.0\"\n"
-  "    type: PROPERTY_TYPE_VECTOR4\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"fog_density\"\n"
-  "    value: \"0.7\"\n"
-  "    type: PROPERTY_TYPE_NUMBER\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"fog_min_max\"\n"
-  "    value: \"10.0, 600.0, 1.0, 1.0\"\n"
-  "    type: PROPERTY_TYPE_VECTOR4\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"ambient\"\n"
-  "    value: \"0.8, 0.8, 0.8, 0.0\"\n"
-  "    type: PROPERTY_TYPE_VECTOR4\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"color_max\"\n"
-  "    value: \"1.1\"\n"
-  "    type: PROPERTY_TYPE_NUMBER\n"
-  "  }\n"
-  "  properties {\n"
-  "    id: \"on\"\n"
-  "    value: \"true\"\n"
-  "    type: PROPERTY_TYPE_BOOLEAN\n"
-  "  }\n"
   "}\n"
   "components {\n"
   "  id: \"controller\"\n"
@@ -645,4 +592,44 @@ embedded_instances {
   "  component: \"/scenes/level/level.gui\"\n"
   "}\n"
   ""
+}
+embedded_instances {
+  id: "enemies_factories"
+  children: "jotuns_factory"
+  data: ""
+}
+embedded_instances {
+  id: "jotuns_factory"
+  data: "components {\n"
+  "  id: \"enemies_factory_controller\"\n"
+  "  component: \"/enemies/jotun/jotuns_factory_controller.script\"\n"
+  "  properties {\n"
+  "    id: \"factory_path\"\n"
+  "    value: \"/jotuns_factory#jotuns_factory\"\n"
+  "    type: PROPERTY_TYPE_URL\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"jotuns_factory\"\n"
+  "  type: \"collectionfactory\"\n"
+  "  data: \"prototype: \\\"/enemies/jotun/jotun.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "pathfinding_map"
+  data: "components {\n"
+  "  id: \"level\"\n"
+  "  component: \"/scenes/level/level.tilemap\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"pathfinding_controller\"\n"
+  "  component: \"/scenes/level/pathfinding_controller.script\"\n"
+  "}\n"
+  ""
+  rotation {
+    x: 0.70710677
+    w: 0.70710677
+  }
 }

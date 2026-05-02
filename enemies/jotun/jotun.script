@@ -1,0 +1,337 @@
+-- Movement
+go.property("max_speed", 15)
+go.property("acceleration", 30)
+
+-- Attacks
+go.property("squared_distance_to_attack", 300)
+go.property("attack_cooldown", 1)
+go.property("attack_duration", 1)
+
+go.property("distance_to_avoid_other_enemy", 20)
+
+local AStar = require "helper.AStar"
+local GRAV = 90
+local MIN = -30
+
+local contact_point_response = hash("contact_point_response")
+local trigger_response = hash("trigger_response")
+
+function init(self)
+	self.velocity = vmath.vector3()
+	self.speed = 0
+	self.position = go.get_position()
+	self.movement_direction = vmath.vector3()
+	self.direction_to_target = vmath.vector3()
+	self.is_on_ground = false
+	self.close_enemies_ids = {}
+	self.in_attack_distance = false
+	self.in_attack_in_cooldown = false
+	self.in_attack_in_progress = false
+	self.attack_time_elapsed = 0.0
+	self.attack_cooldown_time_elapsed = 0.0
+	self.time_to_try_change_direction = 0.0
+	self.current_path = nil
+	self.target_index = -1
+	self.current_tile_coords = nil
+end
+
+local function flip_view(self)
+	if self.direction_to_target.x > 0 then
+		go.set(self.view, "scale.x", -1)
+		go.set_rotation(vmath.euler_to_quat(0, -180.0, 18.759), self.attack_go)
+		local attack_position = go.get_position(self.attack_go)
+		attack_position.x = 151.0
+		go.set_position(attack_position, self.attack_go)
+	elseif self.direction_to_target.x < 0 then
+		go.set(self.view, "scale.x", 1)
+		go.set_rotation(vmath.euler_to_quat(0.0, 0, 18.759), self.attack_go)
+		local attack_position = go.get_position(self.attack_go)
+		attack_position.x = -151.0
+		go.set_position(attack_position, self.attack_go)
+	end
+end
+
+local function contact_point_handler(self, message)
+	self.is_on_ground = true
+	self.velocity.y = 0
+end
+
+local function get_index(list, searching_value)
+	local index = -1
+
+	for i = 1, #list do
+		if list[i] == searching_value then
+			index = i
+			break
+		end
+	end
+
+	return index
+end
+
+local function other_enemy_collision_handler(self, message)
+	local id_index = get_index(self.close_enemies_ids, message.other_id)
+	if message.enter and id_index == -1 then
+		table.insert(self.close_enemies_ids, message.other_id)
+	elseif not message.enter and id_index ~= -1 then
+		--table.remove(self.close_enemies_ids, id_index)
+	end
+end
+
+local function on_attack_finish_animation_end(self, url, property)
+	msg.post(self.attack_go, "disable")
+end
+
+local function interrupt_attack(self)
+	self.in_attack_in_progress = false
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
+end
+
+local function end_attack(self)
+	self.in_attack_in_cooldown = true
+	self.in_attack_in_progress = false
+	self.attack_time_elapsed = 0
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
+end
+
+local function start_attack(self)
+	self.in_attack_in_progress = true
+	msg.post(self.attack_go, "enable")
+	go.set(self.attack_go, "scale", 0.01)
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.0, 1.0, 1.0), go.EASING_LINEAR, 0.1)
+end
+
+local function try_to_attack(self, dt)
+	if self.in_attack_in_cooldown then
+		if self.attack_cooldown_time_elapsed >= self.attack_cooldown then
+			self.in_attack_in_cooldown = false
+			self.attack_cooldown_time_elapsed = 0
+		else
+			self.attack_cooldown_time_elapsed = self.attack_cooldown_time_elapsed + dt
+		end
+		return
+	end
+
+	if not self.in_attack_distance then
+		self.attack_time_elapsed = math.max(self.attack_time_elapsed - dt, 0.0)
+		if self.in_attack_in_progress then
+			interrupt_attack(self)
+		end
+		return
+	end
+
+	if not self.in_attack_in_progress then
+		start_attack(self)
+		return
+	end
+	self.attack_time_elapsed = self.attack_time_elapsed + dt
+	if self.attack_time_elapsed >= self.attack_duration then
+		end_attack(self)
+	end
+end
+
+local function get_direction_away_from_other_enemies(self)
+	local result = vmath.vector3()
+
+	if #self.close_enemies_ids == 0 then
+		return result
+	end
+	
+	for key, value in pairs(self.close_enemies_ids) do
+		local other_position = go.get_position(value)
+		local positions_delta = other_position - self.position
+		local distance_to_other = vmath.length(positions_delta)
+		if distance_to_other <= self.distance_to_avoid_other_enemy then
+			other_position = distance_to_other/self.distance_to_avoid_other_enemy * vmath.normalize(positions_delta)
+			result = result + other_position
+		end
+	end
+	if vmath.length(result) == 0 then
+		return result
+	end
+	result = vmath.normalize(result)
+	result = vmath.vector3(-1 * result.x, 0, -1 * result.z)
+	return result
+end
+
+local function try_move_to_target(self, dt)
+	if not self.is_on_ground then
+		return
+	end
+
+	local target_pos = go.get_position("/player/player")
+	local xz_delta = target_pos - self.position
+	xz_delta.y = 0
+
+	local abs_x = math.abs(xz_delta.x)
+	local abs_z = math.abs(xz_delta.z)
+
+	local direction_to_avoid_enemies = get_direction_away_from_other_enemies(self)
+	local target_related_direction = vmath.normalize(xz_delta)
+	self.direction_to_target = target_related_direction
+	self.in_attack_distance = abs_z < 10 and abs_x < 20
+
+	local is_too_close = abs_z < 7.5 and abs_x < 15
+
+
+	
+	if is_too_close then
+		self.speed = math.min(self.speed + self.acceleration * dt, self.max_speed)
+		target_related_direction = -1 * target_related_direction
+	elseif self.in_attack_distance then
+		if vmath.length(direction_to_avoid_enemies) == 0 then
+			self.speed = 0
+		else
+			self.speed = self.max_speed
+		end
+		target_related_direction = vmath.vector3()
+	else
+		self.speed = math.min(self.speed + self.acceleration * dt, self.max_speed)
+	end
+	local directions_sum = target_related_direction + direction_to_avoid_enemies
+
+
+	if self.time_to_try_change_direction < 0.1 then
+		self.time_to_try_change_direction = self.time_to_try_change_direction + dt
+	else
+		if vmath.length(directions_sum) ~= 0 then
+			directions_sum = vmath.normalize(directions_sum)
+		end
+		self.movement_direction = directions_sum
+		self.time_to_try_change_direction = 0.0
+	end
+	self.velocity.x = self.movement_direction.x * self.speed
+	self.velocity.z = self.movement_direction.z * self.speed
+end
+
+local function calculate_new_path(self, target_pos)
+	local path, _ = AStar.find_path(self.position, target_pos)
+	if path and #path > 0 then
+		
+		print("new path from " .. self.position.x .. " " .. self.position.z .. " to " .. target_pos.x .. " " .. target_pos.z)
+		local f = AStar.screen_to_coords(self.position.x, self.position.z)
+		local t = AStar.screen_to_coords(target_pos.x, target_pos.z)
+		print("(coords) new path from " .. f.x .. " " .. f.z .. " to " .. t.x .. " " .. t.z)
+		print(path[#path].x .. " " .. path[#path].y .. " is " ..astar.get_at(path[#path - 1].x, path[#path - 1].y))
+		
+		if astar.get_at(path[#path - 1].x, path[#path - 1].y) ~= 1 then
+			for i = -1, 1 do
+				for j = -1, 1 do
+					if j ~= i then
+						target_pos = path[#path]
+						target_pos.x = target_pos.x + i
+						target_pos.y = target_pos.y + j
+						print("searching for " .. target_pos.x .. " " .. target_pos.y .. " | " .. astar.get_at(target_pos.x, target_pos.y ))
+						if target_pos.x > 0 and target_pos.y > 0 and astar.get_at(target_pos.x, target_pos.y ) == 1 then
+							self.current_path = path
+							self.target_index = 1
+							table.insert(self.current_path, { x = target_pos.x, y = target_pos.y})
+							return
+						end
+					end
+				end
+			end
+		else
+			self.current_path = path
+			self.target_index = 1
+		end
+	end
+end
+
+local function try_to_move(self, dt)
+	local target_pos = go.get_position("/player/player")
+	local xz_delta = target_pos - self.position
+	xz_delta.y = 0
+
+	local abs_x = math.abs(xz_delta.x)
+	local abs_z = math.abs(xz_delta.z)
+	
+	local target_related_direction = vmath.normalize(xz_delta)
+	self.direction_to_target = target_related_direction
+	self.in_attack_distance = abs_z < 10 and abs_x < 20
+
+	if not self.in_attack_distance then
+		if not self.current_path then
+			calculate_new_path(self, target_pos)
+		end
+	else
+		if self.current_path and self.target_index then
+			self.current_tile_coords = self.current_path[self.target_index]
+		end
+		self.current_path = nil
+		self.target_index = -1
+	end
+	
+	if self.current_path and #self.current_path > 0 and self.target_index <= #self.current_path then
+		local next_tile = self.current_path[self.target_index]
+		local next_pos = AStar.coords_to_screen(next_tile.x, next_tile.y)
+
+		local direction = vmath.normalize(next_pos - self.position)
+		self.position = self.position + direction * self.max_speed * dt
+		go.set_position(self.position)
+
+		if vmath.length(self.position - next_pos) < 2 then
+			self.current_tile_coords = self.current_path[self.target_index]
+			self.target_index = self.target_index + 1
+		end
+	end
+	if self.current_path and self.target_index > #self.current_path then
+		calculate_new_path(self, target_pos)
+	end
+	
+	self.current_coords = AStar.screen_to_coords(self.position.x, self.position.z)
+	
+	if self.current_path and #self.current_path > 0 and self.target_index <= #self.current_path
+	and self.prev_coords and (self.current_coords.x ~= self.prev_coords.x or self.current_coords.z ~= self.prev_coords.z) then
+		print(self.prev_coords.x .. " " .. self.prev_coords.z)
+		AStar.free_tile(self.prev_coords.x, self.prev_coords.z)
+		AStar.set_tile_to_enemy(self.current_coords.x, self.current_coords.z)
+		print(self.current_coords.x .. " " .. self.current_coords.z .. " | is enemy")
+		calculate_new_path(self, target_pos)
+	end
+
+	self.prev_coords = self.current_coords
+
+	if astar.get_at(self.current_coords.x, self.current_coords.z) > 2 then
+		AStar.free_tile(self.current_coords.x, self.current_coords.z)
+		calculate_new_path(self, target_pos)
+	end
+end
+
+local function move(self, dt)
+	local move_dt = self.velocity * dt
+	local pos = self.position + move_dt
+	go.set_position(pos)
+	self.position = pos
+end
+
+local function gravitation(self, dt)
+	if self.is_on_ground then
+		return
+	end
+	self.velocity.y = self.velocity.y - GRAV * dt
+	if self.velocity.y < MIN then self.velocity.y = MIN end
+end
+
+function fixed_update(self, dt)
+	--try_move_to_target(self, dt)
+	try_to_move(self, dt)
+	move(self, dt)
+	flip_view(self)
+	gravitation(self, dt)
+
+	try_to_attack(self, dt)
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == contact_point_response then
+		contact_point_handler(self, message)
+	elseif message_id == trigger_response and message.own_group == hash("enemy") and message.other_group == hash("enemy") then
+		other_enemy_collision_handler(self, message)
+	elseif message_id == hash("INIT") then
+		self.view = message.view_id
+		self.attack_go = message.attack_view_id
+		msg.post(self.attack_go, "disable")
+	end
+end

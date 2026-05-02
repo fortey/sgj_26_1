@@ -1,0 +1,7 @@
+images {
+  image: "/assets/images/enemies/jotun/jotun.png"
+}
+images {
+  image: "/assets/images/enemies/jotun/jotun_attack_vfx.png"
+}
+extrude_borders: 2

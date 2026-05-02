@@ -155,21 +155,23 @@ local function set_animation(self, value)
 end
 
 local function animation(self, dt)
-    -- self.air_timer = self.air_timer + dt
-    if self.jumping or self.onground == 0 then
-        if self.move.y > 0 then
-            set_animation(self, animations.jump)
+    if self.current_animation ~= animations.attack then
+        -- self.air_timer = self.air_timer + dt
+        if self.jumping or self.onground == 0 then
+            if self.move.y > 0 then
+                set_animation(self, animations.jump)
+            else
+                set_animation(self, animations.fall)
+                self.air_timer = self.air_timer + dt
+            end
+        elseif self.move.x ~= 0 or self.move.z ~= 0 then
+            set_animation(self, animations.run)
         else
-            set_animation(self, animations.fall)
-            self.air_timer = self.air_timer + dt
+            set_animation(self, animations.idle)
         end
-    elseif self.move.x ~= 0 or self.move.z ~= 0 then
-        set_animation(self, animations.run)
-    else
-        set_animation(self, animations.idle)
-    end
 
-    flip_view(self)
+        flip_view(self)
+    end
 end
 
 local function dust_particle(self)
@@ -342,13 +344,18 @@ local function jump(self, pressed)
 end
 
 local function attack(self, pressed)
-    if self.current_animation ~= animations.attack then
+    if self.current_animation ~= animations.attack and self.form.attack then
         set_animation(self, animations.attack)
-        timer.delay(0.1, false, function()
-            sprite.play_flipbook(self.vfx, "vfx_knife")
-            timer.delay(0.2, false, function()
-                sprite.play_flipbook(self.vfx, "empty")
+        if self.form.attack_vfx then
+            timer.delay(0.1, false, function()
+                sprite.play_flipbook(self.vfx, self.form.attack_vfx)
+                timer.delay(0.2, false, function()
+                    sprite.play_flipbook(self.vfx, "empty")
+                end)
             end)
+        end
+        timer.delay(self.form.attack_time, false, function()
+            set_animation(self, animations.idle)
         end)
     end
 end

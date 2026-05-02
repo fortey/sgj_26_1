@@ -28,8 +28,7 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_CAPSULE\\n"
   "    position {\\n"
-  "      x: 32.0\\n"
-  "      y: 12.0\\n"
+  "      y: 1.0\\n"
   "    }\\n"
   "    rotation {\\n"
   "      z: 0.70710677\\n"
@@ -38,8 +37,8 @@ embedded_instances {
   "    index: 0\\n"
   "    count: 2\\n"
   "  }\\n"
+  "  data: 1.0\\n"
   "  data: 10.0\\n"
-  "  data: 100.0\\n"
   "}\\n"
   "\"\n"
   "}\n"
@@ -53,11 +52,12 @@ embedded_instances {
   "group: \\\"enemy\\\"\\n"
   "mask: \\\"player\\\"\\n"
   "mask: \\\"enemy\\\"\\n"
+  "mask: \\\"player_attack\\\"\\n"
   "embedded_collision_shape {\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_CAPSULE\\n"
   "    position {\\n"
-  "      x: 9.0\\n"
+  "      x: -0.5\\n"
   "      y: 10.0\\n"
   "    }\\n"
   "    rotation {\\n"
@@ -69,8 +69,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: 3.0\\n"
-  "      y: 19.0\\n"
+  "      x: -6.0\\n"
+  "      y: 16.0\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -78,7 +78,7 @@ embedded_instances {
   "    count: 1\\n"
   "    id: \\\"head\\\"\\n"
   "  }\\n"
-  "  data: 5.5\\n"
+  "  data: 6.5\\n"
   "  data: 5.0\\n"
   "  data: 4.9\\n"
   "}\\n"
@@ -90,19 +90,15 @@ embedded_instances {
 }
 embedded_instances {
   id: "views"
-  children: "main"
-  data: ""
-  position {
-    y: 21.0
-  }
-}
-embedded_instances {
-  id: "main"
-  data: "embedded_components {\n"
+  data: "components {\n"
+  "  id: \"jotun_view\"\n"
+  "  component: \"/enemies/jotun/jotun_view.script\"\n"
+  "}\n"
+  "embedded_components {\n"
   "  id: \"main_view\"\n"
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"jotun\\\"\\n"
-  "material: \\\"/light_and_shadows/materials/sprite/light_sprite.material\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
   "size {\\n"
   "  x: 548.0\\n"
   "  y: 583.0\\n"
@@ -121,6 +117,9 @@ embedded_instances {
   "  }\n"
   "}\n"
   ""
+  position {
+    y: 6.0
+  }
 }
 embedded_instances {
   id: "attack"
@@ -143,8 +142,8 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -310.7737\n"
-  "    y: 14.726123\n"
+  "    x: -269.7896\n"
+  "    y: 48.331238\n"
   "  }\n"
   "}\n"
   "embedded_components {\n"
@@ -160,8 +159,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: -108.195015\\n"
-  "      y: -63.58333\\n"
+  "      x: -125.775085\\n"
+  "      y: -96.68835\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -184,8 +183,8 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: -151.0
-    y: 368.0
+    x: -202.0
+    y: 330.0
   }
   rotation {
     z: 0.16297296

@@ -144,10 +144,8 @@ function init(self)
     end)
 
     events.subscribe(constants.events.on_form_click, on_form, self)
-
-    timer.delay(1, false, function()
-        take_damage(self)
-    end)
+    
+    msg.post(self.form.attack_trigger, "disable")
 end
 
 function final(self)
@@ -305,8 +303,10 @@ function on_message(self, message_id, message, sender)
     elseif message_id == trigger_response then
         if message.group == ahash.item and message.enter then
             take_item(self, message.other_id)
+        elseif message.own_group == ahash.player_attack and message.other_group == ahash.enemy and message.enter then
+            msg.post(message.other_id, ahash.attack, { damage = self.form.attack_damage })
         end
-    elseif message_id == hash("attack") then
+    elseif message_id == ahash.attack then
         take_damage(self)
     end
 end
@@ -380,8 +380,11 @@ local function attack(self, pressed)
         if self.form.attack_vfx then
             timer.delay(0.1, false, function()
                 sprite.play_flipbook(self.vfx, self.form.attack_vfx)
+                local t = go.get_id()
+                msg.post(self.form.attack_trigger, "enable")
                 timer.delay(0.2, false, function()
                     sprite.play_flipbook(self.vfx, "empty")
+                    msg.post(self.form.attack_trigger, "disable")
                 end)
             end)
         end

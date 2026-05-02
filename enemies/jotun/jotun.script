@@ -7,6 +7,8 @@ go.property("squared_distance_to_attack", 300)
 go.property("attack_cooldown", 1)
 go.property("attack_duration", 1)
 
+go.property("health", 4)
+
 go.property("distance_to_avoid_other_enemy", 20)
 
 local AStar = require "helper.AStar"
@@ -16,6 +18,47 @@ local MIN = -30
 local contact_point_response = hash("contact_point_response")
 local trigger_response = hash("trigger_response")
 local sounds = require("scripts.sounds")
+local ahash = require "ahash.ahash"
+
+local function drop_crystal(self)
+	local crystal_position = go.get_position() + vmath.vector3(0.0, 0.5, 0.0)
+	local new_crystal = factory.create("/collectibles_factory#crystals_factory", crystal_position, vmath.euler_to_quat(-26.6, 0, 0), nil, vmath.vector3(1.0))
+	go.animate(new_crystal, "position", go.PLAYBACK_ONCE_PINGPONG, crystal_position + vmath.vector3(0, 7.5, 0), go.EASING_OUTCIRC, 0.6)
+end
+
+local function on_attack_finish_animation_end(self, url, property)
+	msg.post(self.attack_go, "end_attack")
+end
+
+local function end_attack(self)
+	self.in_attack_in_cooldown = true
+	self.in_attack_in_progress = false
+	self.attack_time_elapsed = 0
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
+end
+
+local function start_attack(self)
+	self.in_attack_in_progress = true
+	msg.post(self.attack_go, "start_attack")
+end
+
+local function death_handler(self)
+	end_attack(self)
+	sounds:stop(self.sfx_id)
+	drop_crystal(self)
+
+	msg.post(self.view, ahash.start_melting)
+	timer.delay(1.0, false, function()
+		go.delete(go.get_id(), true)
+	end)
+end
+
+local function change_health(self, delta)
+	self.health = self.health + delta
+	if self.health <= 0 then
+		death_handler(self)
+	end
+end
 
 function init(self)
 	self.velocity = vmath.vector3()
@@ -81,22 +124,6 @@ local function other_enemy_collision_handler(self, message)
 	end
 end
 
-local function on_attack_finish_animation_end(self, url, property)
-	msg.post(self.attack_go, "end_attack")
-end
-
-local function end_attack(self)
-	self.in_attack_in_cooldown = true
-	self.in_attack_in_progress = false
-	self.attack_time_elapsed = 0
-	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
-end
-
-local function start_attack(self)
-	self.in_attack_in_progress = true
-	msg.post(self.attack_go, "start_attack")
-end
-
 local function try_to_attack(self, dt)
 	if self.in_attack_in_cooldown then
 		if self.attack_cooldown_time_elapsed >= self.attack_cooldown then
@@ -130,12 +157,14 @@ local function get_direction_away_from_other_enemies(self)
 	end
 	
 	for key, value in pairs(self.close_enemies_ids) do
-		local other_position = go.get_position(value)
-		local positions_delta = other_position - self.position
-		local distance_to_other = vmath.length(positions_delta)
-		if distance_to_other <= self.distance_to_avoid_other_enemy then
-			other_position = distance_to_other/self.distance_to_avoid_other_enemy * vmath.normalize(positions_delta)
-			result = result + other_position
+		if go.exists(value) then
+			local other_position = go.get_position(value)
+			local positions_delta = other_position - self.position
+			local distance_to_other = vmath.length(positions_delta)
+			if distance_to_other <= self.distance_to_avoid_other_enemy then
+				other_position = distance_to_other/self.distance_to_avoid_other_enemy * vmath.normalize(positions_delta)
+				result = result + other_position
+			end
 		end
 	end
 	if vmath.length(result) == 0 then
@@ -307,12 +336,16 @@ local function gravitation(self, dt)
 end
 
 function fixed_update(self, dt)
+	gravitation(self, dt)
+	if self.health <= 0 then
+		return
+	end
+	
 	if not self.in_attack_in_progress then
 		try_move_to_target(self, dt)
 		--try_to_move(self, dt)
 		
 		if move(self, dt) and not self.movement_sfx_playing then
-			local t = go.get_scale() / 0.04
 			sounds:play(self.sfx_id, { speed = go.get_scale().x / 0.04 })
 			self.movement_sfx_playing = true
 		end
@@ -321,17 +354,22 @@ function fixed_update(self, dt)
 		sounds:stop(self.sfx_id)
 	end
 	flip_view(self)
-	gravitation(self, dt)
 
 	try_to_attack(self, dt)
 end
 
 
 function on_message(self, message_id, message, sender)
+	if self.health <= 0 then
+		return
+	end
+	
 	if message_id == contact_point_response then
 		contact_point_handler(self, message)
 	elseif message_id == trigger_response and message.own_group == hash("enemy") and message.other_group == hash("enemy") then
 		other_enemy_collision_handler(self, message)
+	elseif message_id == ahash.attack then
+		change_health(self, -message.damage)
 	elseif message_id == hash("INIT") then
 		self.view = message.view_id
 		self.attack_go = message.attack_view_id

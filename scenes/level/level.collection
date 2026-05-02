@@ -643,3 +643,13 @@ embedded_instances {
     w: 0.70710677
   }
 }
+embedded_instances {
+  id: "collectibles_factory"
+  data: "embedded_components {\n"
+  "  id: \"crystals_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/prefabs/crystal.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

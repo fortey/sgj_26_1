@@ -8,13 +8,16 @@ M.urls        = { msg.url("level:/player/bear"),
     msg.url("level:/player/bear_arm_r"),
     msg.url("level:/player/bear_head"),
     msg.url("level:/player/bear_leg_l"),
-    msg.url("level:/player/bear_leg_r")
+    msg.url("level:/player/bear_leg_r"),
+    M.attack_trigger
 }
 M.idle        = { key = "bear_idle", opts = { is_loop = true } }
 M.run         = { key = "bear_run", opts = { is_loop = true } }
 M.attack      = { key = "bear_attack" }
 M.attack_vfx  = "empty"
 M.attack_time = 0.5
+M.attack_damage = 2
+M.attack_trigger = msg.url("level:/player/player#bear_attack_trigger")
 M.time        = 10
 M.cooldown    = 20
 

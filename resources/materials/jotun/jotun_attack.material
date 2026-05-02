@@ -1,4 +1,4 @@
-name: "jotun_attack_material"
+name: "jotun_attack"
 tags: "tile"
 vertex_program: "/resources/materials/jotun/jotun_attack.vp"
 fragment_program: "/resources/materials/jotun/jotun_attack.fp"

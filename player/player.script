@@ -139,6 +139,8 @@ function init(self)
 
     self.position = go.get_position()
 
+    self.targets = {}
+
     timer.delay(0, false, function()
         broadcast.send("REGISTER")
     end)
@@ -305,6 +307,12 @@ function on_message(self, message_id, message, sender)
     elseif message_id == trigger_response then
         if message.group == ahash.item and message.enter then
             take_item(self, message.other_id)
+        elseif message.group == ahash.enemy then
+            if message.enter then
+                self.targets[message.other_id] = true
+            else
+                self.targets[message.other_id] = nil
+            end
         end
     end
 end
@@ -381,6 +389,10 @@ local function attack(self, pressed)
                 timer.delay(0.2, false, function()
                     sprite.play_flipbook(self.vfx, "empty")
                 end)
+
+                for enemy_id, value in pairs(self.targets) do
+
+                end
             end)
         end
         timer.delay(self.form.attack_time, false, function()

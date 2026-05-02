@@ -368,6 +368,13 @@ instances {
     z: 5.0
   }
 }
+instances {
+  id: "crystal"
+  prototype: "/prefabs/crystal.go"
+  position {
+    x: 20.0
+  }
+}
 collection_instances {
   id: "player"
   collection: "/player/player.collection"
@@ -437,7 +444,7 @@ embedded_instances {
   "}\n"
   ""
   position {
-    z: 110.0
+    z: 80.0
   }
 }
 embedded_instances {

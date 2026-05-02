@@ -3,9 +3,17 @@
 local inputmapper = require 'input.inputmapper'
 local broadcast   = require "helper.broadcast"
 local common      = require 'helper.common'
+local events      = require("event.events")
+local constants   = require("scripts.constants")
+local ahash       = require "ahash.ahash"
+local sounds      = require("scripts.sounds")
 
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
+
+local girl_state  = require("scripts.player_states.girl")
+local bear_state  = require("scripts.player_states.bear")
+local eagle_state = require("scripts.player_states.eagle")
 
 local FRICTION    = 0.1
 local ACCEL       = 0.2
@@ -18,48 +26,137 @@ local BOUNCE      = 0.2
 
 local h           = inputmapper.h
 
+-- available animations list
+local animations  = {
+    idle   = "idle",
+    run    = "run",
+    jump   = "jump",
+    fall   = "fall",
+    attack = "attack"
+}
+
+local function take_damage(self)
+    self.hp = math.max(0, self.hp - 1)
+    events.trigger(constants.events.on_damage, self.hp)
+end
+
+local function take_item(self, item_id)
+    local key = go.get(msg.url(nil, item_id, "item"), "key")
+    if key == ahash.crystal then
+        self.hp = math.min(5, self.hp + 1)
+        local x, y, z = common.world_to_screen(self.position, "/camera#camera")
+        events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
+        go.delete(item_id)
+    end
+    sounds:play(sounds.loot)
+end
+
+local function change_form(self, form_key)
+    if self.form then
+        for index, url in ipairs(self.form.urls) do
+            msg.post(url, "disable")
+        end
+
+        if self.form_timer then
+            timer.cancel(self.form_timer)
+        end
+
+        if self.form.exit then
+            self.form:exit(self)
+        end
+
+        if self.form.cooldown then
+            events.trigger(constants.events.form_cooldown, self.form.key, self.form.cooldown)
+        end
+    end
+
+    self.form = self.forms[form_key]
+
+    for index, url in ipairs(self.form.urls) do
+        msg.post(url, "enable")
+    end
+
+    if self.form[self.current_animation] then
+        panthera.play(self.animation, self.form[self.current_animation].key, self.form[self.current_animation].opts)
+    end
+    if self.form.enter then
+        self.form:enter(self)
+    end
+
+    if self.form.time then
+        events.trigger(constants.events.set_timeline, self.form.key, self.form.time)
+        self.form_timer = timer.delay(self.form.time, false, function()
+            change_form(self, "girl")
+        end)
+    end
+end
+
+local function on_form(self, key)
+    if self.form.key == key then
+        --change_form(self, "girl")
+    else
+        change_form(self, key)
+    end
+end
+
 function init(self)
-    self.air_timer = 0
-    self.lock = 0
+    self.hp         = 5
 
-    self.onground = ONGROUND
-    self.move = vmath.vector3()
+    self.air_timer  = 0
+    self.lock       = 0
+
+    self.onground   = ONGROUND
+    self.move       = vmath.vector3()
     self.correction = vmath.vector3()
-    self.dir = vmath.vector3(1, 0, 0)
-    self.jump_dt = 0
+    self.dir        = vmath.vector3(1, 0, 0)
+    self.jump_dt    = 0
+    self.min_y      = MIN
 
-    self.sprite = msg.url("#sprite")
-    -- msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
+    self.forms      = {
+        girl = girl_state,
+        bear = bear_state,
+        eagle = eagle_state
+    }
+
+    for key, form in pairs(self.forms) do
+        if key ~= "girl" then
+            for index, url in ipairs(form.urls) do
+                msg.post(url, "disable")
+            end
+        end
+    end
+
+    self.vfx               = msg.url("level:/player/vfx#vfx")
+
+    self.animation         = panthera.create_go(animation)
+    self.current_animation = animations.idle
+    change_form(self, "girl")
+
+    msg.post(".", "acquire_input_focus") -- acquire in inputmapper.init
     self.hero_id = 1
-    self.input = inputmapper.init(self, true, self.hero_id)
-    self.view = msg.url("/player/girl")
+    self.input = inputmapper.init(self, false, self.hero_id)
+    self.view = msg.url("/player/view")
 
-    print("Player init", msg.url())
     self.position = go.get_position()
 
     timer.delay(0, false, function()
         broadcast.send("REGISTER")
     end)
 
-    self.animation = panthera.create_go(animation)
-    panthera.play(self.animation, "run", {
-        is_loop = true
-    })
+    events.subscribe(constants.events.on_form_click, on_form, self)
+
+    timer.delay(1, false, function()
+        take_damage(self)
+    end)
 end
 
 function final(self)
     broadcast.send("UNREGISTER")
     broadcast.unregister_all()
     msg.post(".", "release_input_focus")
-end
 
--- available animations list
-local animations = {
-    idle = { anim = hash("idle") },
-    run  = { anim = hash("run") },
-    jump = { anim = hash("jump") },
-    fall = { anim = hash("fall") },
-}
+    events.unsubscribe(constants.events.on_form_click, on_form, self)
+end
 
 -- Flip
 local function flip_view(self)
@@ -77,25 +174,30 @@ local function set_animation(self, value)
     if self.current_animation ~= value then
         -- sprite.play_flipbook(self.sprite, value.anim)
         self.current_animation = value
+        if self.form[value] then
+            panthera.play(self.animation, self.form[value].key, self.form[value].opts)
+        end
     end
 end
 
 local function animation(self, dt)
-    -- self.air_timer = self.air_timer + dt
-    if self.jumping or self.onground == 0 then
-        if self.move.y > 0 then
-            set_animation(self, animations.jump)
+    if self.current_animation ~= animations.attack then
+        -- self.air_timer = self.air_timer + dt
+        if self.jumping or self.onground == 0 then
+            if self.move.y > 0 then
+                set_animation(self, animations.jump)
+            else
+                set_animation(self, animations.fall)
+                self.air_timer = self.air_timer + dt
+            end
+        elseif self.move.x ~= 0 or self.move.z ~= 0 then
+            set_animation(self, animations.run)
         else
-            set_animation(self, animations.fall)
-            self.air_timer = self.air_timer + dt
+            set_animation(self, animations.idle)
         end
-    elseif self.move.x ~= 0 or self.move.z ~= 0 then
-        set_animation(self, animations.run)
-    else
-        set_animation(self, animations.idle)
-    end
 
-    flip_view(self)
+        flip_view(self)
+    end
 end
 
 local function dust_particle(self)
@@ -167,7 +269,7 @@ local function collision(self, message)
                     common.play_sound("landing", common.pan(self.position, gain))
 
                     if self.air_timer > .3 then
-                        particlefx.play("#landing")
+                        --particlefx.play("#landing")
                         -- go.set(".", "scale.y", 1)
                         -- go.animate(".", "scale.y", go.PLAYBACK_ONCE_PINGPONG, math.max(0.7 - self.air_timer/10, 0.5), go.EASING_INCUBIC, .2)
                         if self.air_timer > .5 then
@@ -201,7 +303,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == contact_point_response then
         collision(self, message)
     elseif message_id == trigger_response then
-
+        if message.group == ahash.item and message.enter then
+            take_item(self, message.other_id)
+        end
     end
 end
 
@@ -238,6 +342,16 @@ local function friction(self)
 end
 
 local function gravitation(self)
+    if self.in_flight then
+        -- Плавный подъём к целевой высоте
+        if self.flight_target_y and self.position.y < self.flight_target_y then
+            self.move.y = self.form.ascend_speed
+        else
+            self.move.y = 0 -- На целевой высоте зависаем
+        end
+        return
+    end
+
     self.move.y = self.move.y - GRAV
     if self.move.y < MIN then self.move.y = MIN end
 end
@@ -256,6 +370,23 @@ local function jump(self, pressed)
 
     self.movable_velocity = nil
     self.prev_platform_pos = nil
+end
+
+local function attack(self, pressed)
+    if self.current_animation ~= animations.attack and self.form.attack then
+        set_animation(self, animations.attack)
+        if self.form.attack_vfx then
+            timer.delay(0.1, false, function()
+                sprite.play_flipbook(self.vfx, self.form.attack_vfx)
+                timer.delay(0.2, false, function()
+                    sprite.play_flipbook(self.vfx, "empty")
+                end)
+            end)
+        end
+        timer.delay(self.form.attack_time, false, function()
+            set_animation(self, animations.idle)
+        end)
+    end
 end
 
 
@@ -319,6 +450,10 @@ function fixed_update(self, dt)
     end
 
     if (self.input.is_pressed(h.JUMP)) then
-        jump(self, true)
+        --jump(self, true)
+    end
+
+    if (self.input.is_pressed(h.FIRE)) then
+        attack(self, true)
     end
 end

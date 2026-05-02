@@ -1,7 +1,19 @@
 images {
-  image: "/assets/images/ui/bear_icon.png"
+  image: "/assets/images/ui/bear.png"
 }
 images {
   image: "/assets/images/ui/belt.png"
+}
+images {
+  image: "/assets/images/ui/heart.png"
+}
+images {
+  image: "/assets/images/ui/timeline.png"
+}
+images {
+  image: "/assets/images/ui/eagle.png"
+}
+images {
+  image: "/assets/images/items/crystal.png"
 }
 extrude_borders: 2

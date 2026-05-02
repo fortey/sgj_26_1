@@ -14,6 +14,24 @@ local function set_timeline(self, icon, time)
     gui.play_flipbook(self.timeline.icon, icon)
 end
 
+local function on_damage(self, hp)
+    for i = hp + 1, 5 do
+        gui.set_enabled(self.hearts[i], false)
+    end
+end
+
+local function take_crystal(self, hp, position)
+    local crystal = gui.clone(self.crystal_prefab)
+    gui.set_enabled(crystal, true)
+    gui.set_screen_position(crystal, vmath.vector3(position.sx, position.sy, 0))
+
+    local heart = self.hearts[hp]
+    gui.animate(crystal, "position", gui.get_position(heart), gui.EASING_INOUTCUBIC, 0.7, 0, function()
+        gui.set_enabled(heart, true)
+        gui.delete_node(crystal)
+    end)
+end
+
 function init(self)
     self.druid = druid.new(self)
 
@@ -37,13 +55,19 @@ function init(self)
         progress_size = 763
     }
 
+    self.crystal_prefab = gui.get_node("crystal_prefab")
+
     msg.post("#", "postinit")
     events.subscribe(constants.events.set_timeline, set_timeline, self)
+    events.subscribe(constants.events.on_damage, on_damage, self)
+    events.subscribe(constants.events.take_crystal, take_crystal, self)
 end
 
 function final(self)
     self.druid:final()
     events.unsubscribe(constants.events.set_timeline, set_timeline, self)
+    events.unsubscribe(constants.events.on_damage, on_damage, self)
+    events.unsubscribe(constants.events.take_crystal, take_crystal, self)
 end
 
 function update(self, dt)

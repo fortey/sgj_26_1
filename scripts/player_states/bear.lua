@@ -11,6 +11,9 @@ M.urls = { msg.url("level:/player/bear"),
 }
 M.idle = { key = "bear_idle", opts = { is_loop = true } }
 M.run = { key = "bear_run", opts = { is_loop = true } }
+M.attack = { key = "bear_attack" }
+M.attack_vfx = "empty"
+M.attack_time = 0.5
 M.time = 10
 
 return M

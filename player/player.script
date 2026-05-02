@@ -5,6 +5,7 @@ local broadcast   = require "helper.broadcast"
 local common      = require 'helper.common'
 local events      = require("event.events")
 local constants   = require("scripts.constants")
+local ahash       = require "ahash.ahash"
 
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
@@ -33,6 +34,21 @@ local animations  = {
     attack = "attack"
 }
 
+local function take_damage(self)
+    self.hp = math.max(0, self.hp - 1)
+    events.trigger(constants.events.on_damage, self.hp)
+end
+
+local function take_item(self, item_id)
+    local key = go.get(msg.url(nil, item_id, "item"), "key")
+    if key == ahash.crystal then
+        self.hp = math.min(5, self.hp + 1)
+        local x, y, z = common.world_to_screen(self.position, "/camera#camera")
+        events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
+        go.delete(item_id)
+    end
+end
+
 local function change_form(self, form_key)
     if self.form then
         for index, url in ipairs(self.form.urls) do
@@ -41,6 +57,10 @@ local function change_form(self, form_key)
 
         if self.form_timer then
             timer.cancel(self.form_timer)
+        end
+
+        if self.form.exit then
+            self.form:exit(self)
         end
     end
 
@@ -118,6 +138,10 @@ function init(self)
     end)
 
     events.subscribe(constants.events.on_form_click, on_form, self)
+
+    timer.delay(1, false, function()
+        take_damage(self)
+    end)
 end
 
 function final(self)
@@ -151,21 +175,23 @@ local function set_animation(self, value)
 end
 
 local function animation(self, dt)
-    -- self.air_timer = self.air_timer + dt
-    if self.jumping or self.onground == 0 then
-        if self.move.y > 0 then
-            set_animation(self, animations.jump)
+    if self.current_animation ~= animations.attack then
+        -- self.air_timer = self.air_timer + dt
+        if self.jumping or self.onground == 0 then
+            if self.move.y > 0 then
+                set_animation(self, animations.jump)
+            else
+                set_animation(self, animations.fall)
+                self.air_timer = self.air_timer + dt
+            end
+        elseif self.move.x ~= 0 or self.move.z ~= 0 then
+            set_animation(self, animations.run)
         else
-            set_animation(self, animations.fall)
-            self.air_timer = self.air_timer + dt
+            set_animation(self, animations.idle)
         end
-    elseif self.move.x ~= 0 or self.move.z ~= 0 then
-        set_animation(self, animations.run)
-    else
-        set_animation(self, animations.idle)
-    end
 
-    flip_view(self)
+        flip_view(self)
+    end
 end
 
 local function dust_particle(self)
@@ -271,6 +297,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == contact_point_response then
         collision(self, message)
     elseif message_id == trigger_response then
+        if message.group == ahash.item and message.enter then
+            take_item(self, message.other_id)
+        end
     end
 end
 
@@ -307,10 +336,18 @@ local function friction(self)
 end
 
 local function gravitation(self)
-    -- if not self.in_flight then
+    if self.in_flight then
+        -- Плавный подъём к целевой высоте
+        if self.flight_target_y and self.position.y < self.flight_target_y then
+            self.move.y = self.form.ascend_speed
+        else
+            self.move.y = 0 -- На целевой высоте зависаем
+        end
+        return
+    end
+
     self.move.y = self.move.y - GRAV
     if self.move.y < MIN then self.move.y = MIN end
-    -- end
 end
 
 local function jump(self, pressed)
@@ -330,13 +367,18 @@ local function jump(self, pressed)
 end
 
 local function attack(self, pressed)
-    if self.current_animation ~= animations.attack then
+    if self.current_animation ~= animations.attack and self.form.attack then
         set_animation(self, animations.attack)
-        timer.delay(0.1, false, function()
-            sprite.play_flipbook(self.vfx, "vfx_knife")
-            timer.delay(0.2, false, function()
-                sprite.play_flipbook(self.vfx, "empty")
+        if self.form.attack_vfx then
+            timer.delay(0.1, false, function()
+                sprite.play_flipbook(self.vfx, self.form.attack_vfx)
+                timer.delay(0.2, false, function()
+                    sprite.play_flipbook(self.vfx, "empty")
+                end)
             end)
+        end
+        timer.delay(self.form.attack_time, false, function()
+            set_animation(self, animations.idle)
         end)
     end
 end

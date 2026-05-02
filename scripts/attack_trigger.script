@@ -1,0 +1,12 @@
+local trigger_response = hash("trigger_response")
+local ahash            = require "ahash.ahash"
+
+function init(self)
+	self.player_url = msg.url("/player/player")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == trigger_response then
+		msg.post(self.player_url, ahash.attack_trigger, message)
+	end
+end

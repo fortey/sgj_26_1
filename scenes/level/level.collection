@@ -393,6 +393,84 @@ instances {
     x: 20.0
   }
 }
+instances {
+  id: "stone1"
+  prototype: "/prefabs/stone1.go"
+  position {
+    z: -55.0
+  }
+}
+instances {
+  id: "stone2"
+  prototype: "/prefabs/stone2.go"
+  position {
+    x: -22.0
+  }
+}
+instances {
+  id: "stone3"
+  prototype: "/prefabs/stone3.go"
+  position {
+    x: -15.0
+    z: -41.0
+  }
+}
+instances {
+  id: "stone4"
+  prototype: "/prefabs/stone4.go"
+  position {
+    x: 20.0
+    z: -29.0
+  }
+}
+instances {
+  id: "stone5"
+  prototype: "/prefabs/stone5.go"
+  position {
+    x: 30.0
+    z: -4.0
+  }
+}
+instances {
+  id: "stone6"
+  prototype: "/prefabs/stone6.go"
+  position {
+    x: -8.0
+    z: 11.0
+  }
+}
+instances {
+  id: "stone7"
+  prototype: "/prefabs/stone7.go"
+  position {
+    x: 9.0
+    z: 17.0
+  }
+}
+instances {
+  id: "stone8"
+  prototype: "/prefabs/stone8.go"
+  position {
+    x: 25.0
+    z: 33.0
+  }
+}
+instances {
+  id: "ground1"
+  prototype: "/prefabs/ground.go"
+  position {
+    x: 8.0
+    z: -15.0
+  }
+}
+instances {
+  id: "tree3"
+  prototype: "/prefabs/tree.go"
+  position {
+    x: -32.0
+    z: -35.0
+  }
+}
 collection_instances {
   id: "player"
   collection: "/player/player.collection"
@@ -515,9 +593,19 @@ embedded_instances {
 }
 embedded_instances {
   id: "props"
+  children: "ground1"
+  children: "stone1"
+  children: "stone2"
+  children: "stone3"
+  children: "stone4"
+  children: "stone5"
+  children: "stone6"
+  children: "stone7"
+  children: "stone8"
   children: "tree"
   children: "tree1"
   children: "tree2"
+  children: "tree3"
   data: ""
 }
 embedded_instances {

@@ -16,6 +16,7 @@ M.time                 = 5
 M.ascend_speed         = 0.8
 M.flight_height_offset = 20
 M.cooldown             = 20
+M.speed                = 0.65
 
 function M:enter(player)
     player.flight_target_y = self.flight_height_offset

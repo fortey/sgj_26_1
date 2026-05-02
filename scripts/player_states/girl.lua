@@ -16,5 +16,6 @@ M.run = { key = "run", opts = { is_loop = true } }
 M.attack = { key = "attack" }
 M.attack_vfx = "vfx_knife"
 M.attack_time = 0.5
+M.speed = 0.45
 
 return M

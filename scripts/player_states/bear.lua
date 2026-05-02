@@ -18,6 +18,7 @@ M.attack_vfx  = "empty"
 M.attack_time = 0.5
 M.time        = 10
 M.cooldown    = 20
+M.speed       = 0.30
 
 function M:enter(player)
     sounds:play(sounds.bear)

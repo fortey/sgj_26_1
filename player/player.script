@@ -42,6 +42,10 @@ local function change_form(self, form_key)
         if self.form_timer then
             timer.cancel(self.form_timer)
         end
+
+        if self.form.exit then
+            self.form:exit(self)
+        end
     end
 
     self.form = self.forms[form_key]
@@ -307,10 +311,18 @@ local function friction(self)
 end
 
 local function gravitation(self)
-    -- if not self.in_flight then
+    if self.in_flight then
+        -- Плавный подъём к целевой высоте
+        if self.flight_target_y and self.position.y < self.flight_target_y then
+            self.move.y = self.form.ascend_speed
+        else
+            self.move.y = 0 -- На целевой высоте зависаем
+        end
+        return
+    end
+
     self.move.y = self.move.y - GRAV
     if self.move.y < MIN then self.move.y = MIN end
-    -- end
 end
 
 local function jump(self, pressed)

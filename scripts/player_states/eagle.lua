@@ -10,12 +10,17 @@ M.urls = { msg.url("level:/player/eagle"),
 }
 M.idle = { key = "eagle_idle", opts = { is_loop = true } }
 M.run = { key = "eagle_idle", opts = { is_loop = true } }
-M.time = 10
+M.time = 5
+M.ascend_speed = 0.8
+M.flight_height_offset = 20
 
 function M:enter(player)
-    -- player.move.y = 2
-    -- player.min_y = 2
-    -- player.in_flight = true
+    player.flight_target_y = self.flight_height_offset
+    player.in_flight = true
+end
+
+function M:exit(player)
+    player.in_flight = false
 end
 
 return M

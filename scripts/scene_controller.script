@@ -1,8 +1,8 @@
-local triggers         = require "in.triggers"
-local light            = require 'light_and_shadows.light'
-local common           = require 'helper.common'
-local broadcast        = require 'helper.broadcast'
-local events           = require("event.events")
+local triggers  = require "in.triggers"
+local light     = require 'light_and_shadows.light'
+local common    = require 'helper.common'
+local broadcast = require 'helper.broadcast'
+local events    = require("event.events")
 
 go.property("camera_go_id", msg.url("camera"))
 go.property("camera_id", msg.url("camera#camera"))
@@ -26,7 +26,6 @@ end
 
 function final(self)
     msg.post(".", "release_input_focus")
- 
 end
 
 function update(self, dt)
@@ -39,7 +38,8 @@ function update(self, dt)
         local max_speed = nil
         camera_pos.x, cur_velocity.x = common.smooth_damp(camera_pos.x, obj_position.x, cur_velocity.x, smooth_time,
             max_speed, dt)
-        -- camera_pos.y, cur_velocity.y = common.smooth_damp(camera_pos.y, obj_position.y, cur_velocity.y, smooth_time, max_speed, dt)
+        camera_pos.y, cur_velocity.y = common.smooth_damp(camera_pos.y, obj_position.y, cur_velocity.y, smooth_time,
+            max_speed, dt)
         camera_pos.z, cur_velocity.z = common.smooth_damp(camera_pos.z, obj_position.z, cur_velocity.z, smooth_time,
             max_speed, dt)
         go.set(self.cam_look_at, "position", camera_pos)
@@ -48,7 +48,6 @@ function update(self, dt)
     light.set_position(go.get_rotation(self.cam_look_at), go.get_position(self.cam_look_at),
         go.get_world_position(self.camera_go_id), go.get(self.camera_go_id, "position.z"))
     common.cam_pos = light.cam_look_at
-
 end
 
 local function keyboard_map(self, action_id, action)
@@ -73,7 +72,6 @@ local left = hash("touch")
 local root = vmath.vector3(0, 0, 0)
 local up   = vmath.vector3(0, 1, 0)
 function on_input(self, action_id, action)
-    
     keyboard_map(self, action_id, action)
     zoom(self, action_id, action)
 

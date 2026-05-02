@@ -6,6 +6,7 @@ local common      = require 'helper.common'
 local events      = require("event.events")
 local constants   = require("scripts.constants")
 local ahash       = require "ahash.ahash"
+local sounds      = require("scripts.sounds")
 
 local panthera    = require("panthera.panthera")
 local animation   = require("resources.anims.girl")
@@ -47,6 +48,7 @@ local function take_item(self, item_id)
         events.trigger(constants.events.take_crystal, self.hp, { sx = x, sy = y })
         go.delete(item_id)
     end
+    sounds:play(sounds.loot)
 end
 
 local function change_form(self, form_key)

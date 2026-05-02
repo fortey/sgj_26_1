@@ -3,6 +3,7 @@ local light     = require 'light_and_shadows.light'
 local common    = require 'helper.common'
 local broadcast = require 'helper.broadcast'
 local events    = require("event.events")
+local sounds    = require("scripts.sounds")
 
 go.property("camera_go_id", msg.url("camera"))
 go.property("camera_id", msg.url("camera#camera"))
@@ -22,6 +23,8 @@ function init(self)
     self.touch_down = false
     self.swipe_start_time = 0
     self.camera_velocity = vmath.vector3()
+
+    sounds:play(sounds.music)
 end
 
 function final(self)

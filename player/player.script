@@ -136,6 +136,7 @@ function init(self)
     self.hero_id = 1
     self.input = inputmapper.init(self, false, self.hero_id)
     self.view = msg.url("/player/view")
+    self.attack_trigger = msg.url("/player/attack_trig")
 
     self.position = go.get_position()
 
@@ -165,9 +166,11 @@ local function flip_view(self)
     if self.dir.x == -1 then
         --sprite.set_hflip(self.sprite, true)
         go.set(self.view, "scale.x", -1)
+        go.set(self.attack_trigger, "position.x", -2.7)
     else
         --sprite.set_hflip(self.sprite, false)
         go.set(self.view, "scale.x", 1)
+        go.set(self.attack_trigger, "position.x", 2.7)
     end
 end
 
@@ -307,12 +310,18 @@ function on_message(self, message_id, message, sender)
     elseif message_id == trigger_response then
         if message.group == ahash.item and message.enter then
             take_item(self, message.other_id)
-        elseif message.group == ahash.enemy then
-            if message.enter then
-                self.targets[message.other_id] = true
-            else
-                self.targets[message.other_id] = nil
-            end
+            -- elseif message.group == ahash.enemy then
+            --     if message.enter then
+            --         self.targets[message.other_id] = true
+            --     else
+            --         self.targets[message.other_id] = nil
+            --     end
+        end
+    elseif message_id == ahash.attack_trigger then
+        if message.enter then
+            self.targets[message.other_id] = true
+        else
+            self.targets[message.other_id] = nil
         end
     end
 end

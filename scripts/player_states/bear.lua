@@ -8,7 +8,8 @@ M.urls        = { msg.url("level:/player/bear"),
     msg.url("level:/player/bear_arm_r"),
     msg.url("level:/player/bear_head"),
     msg.url("level:/player/bear_leg_l"),
-    msg.url("level:/player/bear_leg_r")
+    msg.url("level:/player/bear_leg_r"),
+    msg.url("level", "/player/player", "co_bear"),
 }
 M.idle        = { key = "bear_idle", opts = { is_loop = true } }
 M.run         = { key = "bear_run", opts = { is_loop = true } }

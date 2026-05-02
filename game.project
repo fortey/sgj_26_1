@@ -58,3 +58,6 @@ autosave_timer = 0
 saver_key = saver
 lua_require_as_string = 0
 
+[graphics]
+max_debug_vertices = 100000
+

@@ -71,4 +71,43 @@ images {
 images {
   image: "/assets/images/girl/girl_knife.png"
 }
+images {
+  image: "/assets/images/props/ground.png"
+}
+images {
+  image: "/assets/images/props/stone1.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone2.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone4.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone5.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone6.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone7.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone_brown.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/stone_brown2.png"
+  pivot_y: 1.0
+}
+images {
+  image: "/assets/images/props/tree.png"
+  pivot_y: 1.0
+}
 extrude_borders: 2

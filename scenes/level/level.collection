@@ -396,15 +396,6 @@ instances {
 collection_instances {
   id: "player"
   collection: "/player/player.collection"
-  rotation {
-    x: -0.23004974
-    w: 0.97317886
-  }
-  scale3 {
-    x: 0.04
-    y: 0.04
-    z: 0.04
-  }
 }
 scale_along_z: 0
 embedded_instances {

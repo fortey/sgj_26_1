@@ -36,7 +36,6 @@ local function take_crystal(self, hp, position)
 end
 
 local function set_form_cooldown(self, key, cooldown)
-    print(key, cooldown)
     self[key].button:set_enabled(false)
     gui.set_color(self[key].button.node, color_disabled)
     gui.set_text(self[key].cooldown_text, tostring(cooldown))

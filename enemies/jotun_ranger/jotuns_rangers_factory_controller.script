@@ -1,11 +1,13 @@
 go.property("factory_path", msg.url())
+local events      = require("event.events")
+local constants   = require("scripts.constants")
 
 local jotun_parts = {
 	JOTUN = hash("/jotun"),
 	VIEW = hash("/views"),
 	ATTACK_VIEW = hash("/attack"),
 	SFX = hash("/sfx"),
-	VIEW_PARTS ={
+	VIEW_PARTS = {
 		LEG_RIGHT = hash("/leg_right"),
 		LEG_LEFT = hash("/leg_left"),
 		ARM_RIGHT = hash("/arm_right"),
@@ -15,25 +17,33 @@ local jotun_parts = {
 }
 
 local function create(self, position)
-	local entity_ids = collectionfactory.create(self.factory_path, position)
-	go.set_scale(0.04 * math.random(85, 115)/100, entity_ids[jotun_parts.JOTUN])
+	local entity_ids = collectionfactory.create(self.factory_path, go.get_position("/player/player") + position)
+	go.set_scale(0.04 * math.random(85, 115) / 100, entity_ids[jotun_parts.JOTUN])
 	go.set_rotation(vmath.euler_to_quat(-26.6, 0, 0), entity_ids[jotun_parts.JOTUN])
-	msg.post(entity_ids[jotun_parts.JOTUN], "INIT", { 
+	msg.post(entity_ids[jotun_parts.JOTUN], "INIT", {
 		view_id = entity_ids[jotun_parts.VIEW],
 		attack_view_id = entity_ids[jotun_parts.ATTACK_VIEW],
 		sfx_id = entity_ids[jotun_parts.SFX]
 	})
-	local view_parts = { 
-		entity_ids[jotun_parts.VIEW_PARTS.LEG_RIGHT], 
-		entity_ids[jotun_parts.VIEW_PARTS.LEG_LEFT], 
-		entity_ids[jotun_parts.VIEW_PARTS.ARM_RIGHT], 
-		entity_ids[jotun_parts.VIEW_PARTS.ARM_LEFT], 
-		entity_ids[jotun_parts.VIEW_PARTS.BODY], 
+	local view_parts = {
+		entity_ids[jotun_parts.VIEW_PARTS.LEG_RIGHT],
+		entity_ids[jotun_parts.VIEW_PARTS.LEG_LEFT],
+		entity_ids[jotun_parts.VIEW_PARTS.ARM_RIGHT],
+		entity_ids[jotun_parts.VIEW_PARTS.ARM_LEFT],
+		entity_ids[jotun_parts.VIEW_PARTS.BODY],
 	}
 	msg.post(entity_ids[jotun_parts.VIEW], "INIT", { views_ids = view_parts })
 end
 
+local function on_enemy_die(self)
+	self.kills = self.kills + 1
+	if self.kills > 3 and self.kills < 7 then
+		create(self, vmath.vector3(-40, 0, -70))
+	end
+end
+
 function init(self)
+	self.kills = 0
 	--create(self, vmath.vector3(-40, 0, -40))
 	--create(self, vmath.vector3(0, 0, 40))
 	--create(self, vmath.vector3(-40, 0, 0))
@@ -44,4 +54,9 @@ function init(self)
 	--create(self, vmath.vector3(28, 0, -28))
 	--create(self, vmath.vector3(28, 0, -28))
 	--create(self, vmath.vector3(-28, 0, 28))
+	events.subscribe(constants.events.on_enemy_die, on_enemy_die, self)
+end
+
+function final(self)
+	events.unsubscribe(constants.events.on_enemy_die, on_enemy_die, self)
 end

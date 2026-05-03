@@ -3055,6 +3055,7 @@ embedded_instances {
   id: "enemies_factories"
   children: "boss_factory"
   children: "jotuns_factory"
+  children: "jotuns_rangers_factory"
   data: ""
 }
 embedded_instances {
@@ -17874,4 +17875,43 @@ embedded_instances {
     x: 1070.0
     z: 10.0
   }
+}
+embedded_instances {
+  id: "jotuns_rangers_factory"
+  children: "rangers_projectiles_factory"
+  data: "components {\n"
+  "  id: \"enemies_factory_controller\"\n"
+  "  component: \"/enemies/jotun_ranger/jotuns_rangers_factory_controller.script\"\n"
+  "  properties {\n"
+  "    id: \"factory_path\"\n"
+  "    value: \"/jotuns_rangers_factory#jotuns_rangers_factory\"\n"
+  "    type: PROPERTY_TYPE_URL\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"jotuns_rangers_factory\"\n"
+  "  type: \"collectionfactory\"\n"
+  "  data: \"prototype: \\\"/enemies/jotun_ranger/jotun_ranger.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "rangers_projectiles_factory"
+  data: "components {\n"
+  "  id: \"rangers_projectiles_factory_controller\"\n"
+  "  component: \"/enemies/jotun_ranger/rangers_projectile/jotuns_rangers_projectiles_factory_controller.script\"\n"
+  "  properties {\n"
+  "    id: \"factory_path\"\n"
+  "    value: \"/rangers_projectiles_factory#rangers_projectiles_factory\"\n"
+  "    type: PROPERTY_TYPE_URL\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"rangers_projectiles_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/enemies/jotun_ranger/rangers_projectile/rangers_projectile.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
 }

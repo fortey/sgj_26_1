@@ -10,26 +10,27 @@ local sounds      = require("scripts.sounds")
 local monarch     = require "monarch.monarch"
 
 
-local panthera    = require("panthera.panthera")
-local animation   = require("resources.anims.girl")
+local panthera        = require("panthera.panthera")
+local animation       = require("resources.anims.girl")
 
-local girl_state  = require("scripts.player_states.girl")
-local bear_state  = require("scripts.player_states.bear")
-local eagle_state = require("scripts.player_states.eagle")
+local girl_state      = require("scripts.player_states.girl")
+local bear_state      = require("scripts.player_states.bear")
+local eagle_state     = require("scripts.player_states.eagle")
 
-local FRICTION    = 0.1
-local ACCEL       = 0.2
-local SPEED_MAX   = 0.45
-local ONGROUND    = 10
-local MIN         = -3
-local JUMP        = 2.6
-local GRAV        = 0.15
-local BOUNCE      = 0.2
+local FRICTION        = 0.1
+local ACCEL           = 0.2
+local SPEED_MAX       = 0.45
+local ONGROUND        = 10
+local MIN             = -3
+local JUMP            = 2.6
+local GRAV            = 0.15
+local BOUNCE          = 0.2
+local INVULNERABILITY = 2
 
-local h           = inputmapper.h
+local h               = inputmapper.h
 
 -- available animations list
-local animations  = {
+local animations      = {
     idle   = "idle",
     run    = "run",
     jump   = "jump",
@@ -38,7 +39,11 @@ local animations  = {
 }
 
 local function take_damage(self)
+    if self.invulnerability_time > 0 then
+        return
+    end
     self.hp = math.max(0, self.hp - 1)
+    self.invulnerability_time = INVULNERABILITY
     events.trigger(constants.events.on_damage, self.hp)
 
     if self.hp == 0 then
@@ -116,19 +121,20 @@ local function on_form(self, key)
 end
 
 function init(self)
-    self.hp         = 5
+    self.hp                   = 5
 
-    self.air_timer  = 0
-    self.lock       = 0
+    self.air_timer            = 0
+    self.lock                 = 0
 
-    self.onground   = ONGROUND
-    self.move       = vmath.vector3()
-    self.correction = vmath.vector3()
-    self.dir        = vmath.vector3(1, 0, 0)
-    self.jump_dt    = 0
-    self.min_y      = MIN
+    self.onground             = ONGROUND
+    self.move                 = vmath.vector3()
+    self.correction           = vmath.vector3()
+    self.dir                  = vmath.vector3(1, 0, 0)
+    self.jump_dt              = 0
+    self.min_y                = MIN
+    self.invulnerability_time = 0
 
-    self.forms      = {
+    self.forms                = {
         girl = girl_state,
         bear = bear_state,
         eagle = eagle_state
@@ -504,5 +510,9 @@ function fixed_update(self, dt)
 
     if (self.input.is_pressed(h.FIRE)) then
         attack(self, true)
+    end
+
+    if self.invulnerability_time > 0 then
+        self.invulnerability_time = self.invulnerability_time - dt
     end
 end

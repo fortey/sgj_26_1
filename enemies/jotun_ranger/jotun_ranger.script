@@ -3,13 +3,15 @@ go.property("max_speed", 15)
 go.property("acceleration", 30)
 
 -- Attacks
-go.property("squared_distance_to_attack", 300)
+go.property("attack_distance_x", 24)
+go.property("attack_distance_z", 12)
 go.property("attack_cooldown", 1)
 go.property("attack_duration", 1)
 
 go.property("health", 5)
 
-go.property("distance_to_avoid_other_enemy", 20)
+go.property("distance_to_avoid_player_x", 15)
+go.property("distance_to_avoid_player_z", 7.5)
 
 local steering = require("helper.steering")
 local GRAV = 90
@@ -20,41 +22,29 @@ local trigger_response = hash("trigger_response")
 local sounds = require("scripts.sounds")
 local ahash = require "ahash.ahash"
 
-local function drop_sun(self)
-	local sun_position = go.get_position() + vmath.vector3(0.0, 5, 0.0)
-	local sun = factory.create("/collectibles_factory#sun_factory", sun_position, nil, nil, 1)
-end
-
-local function on_attack_finish_animation_end(self, url, property)
-	--msg.post(self.attack_go, "end_attack")
+local function drop_crystal(self)
+	local crystal_position = go.get_position() + vmath.vector3(0.0, 0.5, 0.0)
+	local new_crystal = factory.create("/collectibles_factory#crystals_factory", crystal_position, vmath.euler_to_quat(-26.6, 0, 0), nil, vmath.vector3(1.0))
+	go.animate(new_crystal, "position", go.PLAYBACK_ONCE_PINGPONG, crystal_position + vmath.vector3(0, 7.5, 0), go.EASING_OUTCIRC, 0.6)
 end
 
 local function end_attack(self)
-	self.in_attack_in_cooldown = true
-	self.in_attack_in_progress = false
+	self.is_attack_in_cooldown = true
+	self.is_attack_in_progress = false
 	self.attack_time_elapsed = 0
-	-- go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05,
-	-- 	0.0, on_attack_finish_animation_end)
 end
 
 local function start_attack(self)
-	self.in_attack_in_progress = true
-	local bullet_pos           = go.get_position()
-	bullet_pos.y               = bullet_pos.y + 20
-
-	local target_pos           = go.get_position("/player/player")
-	local direction            = vmath.normalize(target_pos - bullet_pos)
-
-	local bullet_id            = factory.create(self.bullet_factory, bullet_pos)
-	local bullet_velocity      = direction * 30
-	msg.post(bullet_id, "set_velocity", { velocity = bullet_velocity })
-	--msg.post(self.attack_go, "start_attack")
+	self.is_attack_in_progress = true
+	if self.view then
+		msg.post(self.attack_go, "start_attack")
+	end
 end
 
 local function death_handler(self)
 	end_attack(self)
 	sounds:stop(self.sfx_id)
-	drop_sun(self)
+	drop_crystal(self)
 	msg.post("#obstacle_co", ahash.disable)
 	msg.post(self.view, ahash.start_melting)
 	timer.delay(1.0, false, function()
@@ -66,7 +56,7 @@ local function change_health(self, delta)
 	self.health = self.health + delta
 	if self.health <= 0 then
 		death_handler(self)
-	elseif delta < 0 then
+	elseif delta < 0 and self.view then
 		msg.post(self.view, ahash.attack)
 	end
 end
@@ -80,8 +70,8 @@ function init(self)
 	self.is_on_ground = false
 	self.close_enemies_ids = {}
 	self.in_attack_distance = false
-	self.in_attack_in_cooldown = false
-	self.in_attack_in_progress = false
+	self.is_attack_in_cooldown = false
+	self.is_attack_in_progress = false
 	self.attack_time_elapsed = 0.0
 	self.attack_cooldown_time_elapsed = 0.0
 	self.time_to_try_change_direction = 0.0
@@ -90,22 +80,20 @@ function init(self)
 	self.current_tile_coords = nil
 	self.movement_is_active = false
 	self.id = go.get_id()
-
-	self.bullet_factory = msg.url("#bullet_factory")
 end
 
 local function flip_view(self)
-	if self.direction_to_target.x > 0 then
+	if self.direction_to_target.x > 0 and self.view then
 		go.set(self.view, "scale.x", -1)
-		go.set_rotation(vmath.euler_to_quat(0, -180.0, 18.759), self.attack_go)
+		go.set_rotation(vmath.euler_to_quat(0, -180.0, 0), self.attack_go)
 		local attack_position = go.get_position(self.attack_go)
-		attack_position.x = 151.0
+		attack_position.x = 195.0
 		go.set_position(attack_position, self.attack_go)
-	elseif self.direction_to_target.x < 0 then
+	elseif self.direction_to_target.x < 0 and self.view then
 		go.set(self.view, "scale.x", 1)
-		go.set_rotation(vmath.euler_to_quat(0.0, 0, 18.759), self.attack_go)
+		go.set_rotation(vmath.euler_to_quat(0.0, 0, 0), self.attack_go)
 		local attack_position = go.get_position(self.attack_go)
-		attack_position.x = -151.0
+		attack_position.x = -195.0
 		go.set_position(attack_position, self.attack_go)
 	end
 end
@@ -138,9 +126,9 @@ local function other_enemy_collision_handler(self, message)
 end
 
 local function try_to_attack(self, dt)
-	if self.in_attack_in_cooldown then
+	if self.is_attack_in_cooldown then
 		if self.attack_cooldown_time_elapsed >= self.attack_cooldown then
-			self.in_attack_in_cooldown = false
+			self.is_attack_in_cooldown = false
 			self.attack_cooldown_time_elapsed = 0
 		else
 			self.attack_cooldown_time_elapsed = self.attack_cooldown_time_elapsed + dt
@@ -148,11 +136,11 @@ local function try_to_attack(self, dt)
 		return
 	end
 
-	if not self.in_attack_distance then
+	if not self.is_attack_distance then
 		return
 	end
-
-	if not self.in_attack_in_progress then
+	
+	if not self.is_attack_in_progress then
 		start_attack(self)
 		return
 	end
@@ -166,37 +154,30 @@ local function try_move_to_target(self, dt)
 	if not self.is_on_ground then return end
 
 	local target_pos = go.get_position("/player/player")
-	local xz_delta   = target_pos - self.position
-	xz_delta.y       = 0
+	local xz_delta = target_pos - self.position
+	xz_delta.y = 0
 
-	local abs_x      = math.abs(xz_delta.x)
-	local abs_z      = math.abs(xz_delta.z)
+	local abs_x = math.abs(xz_delta.x)
+	local abs_z = math.abs(xz_delta.z)
 
-	if not self.is_active then
-		self.is_active = abs_z < 40 and abs_x < 60
-		return
-	end
+	local desired_direction = vmath.normalize(xz_delta)
 
-	desired_direction        = vmath.normalize(xz_delta)
+	self.movement_direction = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0), desired_direction, self.close_enemies_ids)
+	self.direction_to_target = desired_direction
+	self.is_attack_distance = abs_z < self.attack_distance_z and abs_x < self.attack_distance_x
 
-	self.movement_direction  = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0),
-		desired_direction, self.close_enemies_ids)
-	self.direction_to_target = self.movement_direction
-	self.in_attack_distance  = abs_z < 25 and abs_x < 50
+	local is_too_close = abs_z < self.distance_to_avoid_player_z and abs_x < self.distance_to_avoid_player_x
 
-	--local is_too_close       = abs_z < 7.5 and abs_x < 15
-
-	-- if is_too_close then
-	-- 	self.speed               = math.min(self.speed + self.acceleration * dt, self.max_speed)
-	-- 	self.direction_to_target = -1 * self.direction_to_target
-	-- else
-	if self.in_attack_distance then
+	if is_too_close then
+		self.speed  = math.min(self.speed + self.acceleration * dt, self.max_speed)
+		self.movement_direction = -1 * self.movement_direction
+	elseif self.is_attack_distance then
 		self.speed = 0
 	else
 		self.speed = math.min(self.speed + self.acceleration * dt, self.max_speed)
 	end
-	self.velocity.x = self.direction_to_target.x * self.speed
-	self.velocity.z = self.direction_to_target.z * self.speed
+	self.velocity.x = self.movement_direction.x * self.speed
+	self.velocity.z = self.movement_direction.z * self.speed
 end
 
 local function move(self, dt)
@@ -218,13 +199,17 @@ end
 local function init_movement_fx(self)
 	self.scale = self.scale or go.get_scale().x / 0.04
 	sounds:play(self.sfx_id, { speed = self.scale })
-	go.set(self.view, "rotation.z", -math.pi / 80)
-	go.animate(self.view, "rotation.z", go.PLAYBACK_LOOP_PINGPONG, math.pi / 80, go.EASING_LINEAR, 1)
+	if self.view then
+		go.set(self.view, "rotation.z", -math.pi/80)
+		go.animate(self.view, "rotation.z", go.PLAYBACK_LOOP_PINGPONG, math.pi/80, go.EASING_LINEAR, 1)
+	end
 end
 
 local function stop_movement_fx(self)
-	go.cancel_animations(self.view, "rotation")
-	go.animate(self.view, "rotation.z", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.2)
+	if self.view then
+		go.cancel_animations(self.view, "rotation")
+		go.animate(self.view, "rotation.z", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.2)
+	end
 	sounds:stop(self.sfx_id)
 end
 
@@ -233,10 +218,10 @@ function fixed_update(self, dt)
 	if self.health <= 0 then
 		return
 	end
-
-	if not self.in_attack_in_progress then
+	
+	if not self.is_attack_in_progress then
 		try_move_to_target(self, dt)
-
+		
 		if move(self, dt) and not self.movement_is_active then
 			init_movement_fx(self)
 			self.movement_is_active = true
@@ -250,11 +235,12 @@ function fixed_update(self, dt)
 	try_to_attack(self, dt)
 end
 
+
 function on_message(self, message_id, message, sender)
 	if self.health <= 0 then
 		return
 	end
-
+	
 	if message_id == contact_point_response then
 		contact_point_handler(self, message)
 	elseif message_id == trigger_response and message.own_group == ahash.enemy and message.other_group == ahash.enemy then

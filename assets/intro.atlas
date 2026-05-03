@@ -1,4 +1,7 @@
 images {
   image: "/assets/images/intro.png"
 }
+images {
+  image: "/assets/images/ui/tutor.png"
+}
 extrude_borders: 2

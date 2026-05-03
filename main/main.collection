@@ -123,3 +123,22 @@ embedded_instances {
   "}\n"
   ""
 }
+embedded_instances {
+  id: "gameover_proxy"
+  data: "components {\n"
+  "  id: \"screen_proxy\"\n"
+  "  component: \"/monarch/screen_proxy.script\"\n"
+  "  properties {\n"
+  "    id: \"screen_id\"\n"
+  "    value: \"gameover\"\n"
+  "    type: PROPERTY_TYPE_HASH\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"collectionproxy\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/scenes/gameover/gameover.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

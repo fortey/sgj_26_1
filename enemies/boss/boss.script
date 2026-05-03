@@ -1,0 +1,259 @@
+-- Movement
+go.property("max_speed", 15)
+go.property("acceleration", 30)
+
+-- Attacks
+go.property("squared_distance_to_attack", 300)
+go.property("attack_cooldown", 1)
+go.property("attack_duration", 1)
+
+go.property("health", 5)
+
+go.property("distance_to_avoid_other_enemy", 20)
+
+local monarch = require "monarch.monarch"
+
+local steering = require("helper.steering")
+local GRAV = 90
+local MIN = -30
+
+local contact_point_response = hash("contact_point_response")
+local trigger_response = hash("trigger_response")
+local sounds = require("scripts.sounds")
+local ahash = require "ahash.ahash"
+
+local function drop_sun(self)
+	local sun_position = go.get_position() + vmath.vector3(0.0, 5, 0.0)
+	local sun = factory.create("/collectibles_factory#sun_factory", sun_position, nil, nil, 1)
+	go.animate(sun, "position", go.PLAYBACK_ONCE_FORWARD, sun_position + vmath.vector3(0, 30, 0),
+		go.EASING_OUTCIRC, 2, 0, function()
+			monarch.show("final")
+		end)
+end
+
+local function on_attack_finish_animation_end(self, url, property)
+	msg.post(self.attack_go, "end_attack")
+end
+
+local function end_attack(self)
+	self.in_attack_in_cooldown = true
+	self.in_attack_in_progress = false
+	self.attack_time_elapsed = 0
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05,
+		0.0, on_attack_finish_animation_end)
+end
+
+local function start_attack(self)
+	self.in_attack_in_progress = true
+	msg.post(self.attack_go, "start_attack")
+end
+
+local function death_handler(self)
+	end_attack(self)
+	sounds:stop(self.sfx_id)
+	drop_sun(self)
+	msg.post("#obstacle_co", ahash.disable)
+	msg.post(self.view, ahash.start_melting)
+	timer.delay(1.0, false, function()
+		go.delete(go.get_id(), true)
+	end)
+end
+
+local function change_health(self, delta)
+	self.health = self.health + delta
+	if self.health <= 0 then
+		death_handler(self)
+	elseif delta < 0 then
+		msg.post(self.view, ahash.attack)
+	end
+end
+
+function init(self)
+	self.velocity = vmath.vector3()
+	self.speed = 0
+	self.position = go.get_position()
+	self.movement_direction = vmath.vector3()
+	self.direction_to_target = vmath.vector3()
+	self.is_on_ground = false
+	self.close_enemies_ids = {}
+	self.in_attack_distance = false
+	self.in_attack_in_cooldown = false
+	self.in_attack_in_progress = false
+	self.attack_time_elapsed = 0.0
+	self.attack_cooldown_time_elapsed = 0.0
+	self.time_to_try_change_direction = 0.0
+	self.current_path = nil
+	self.target_index = -1
+	self.current_tile_coords = nil
+	self.movement_is_active = false
+	self.id = go.get_id()
+end
+
+local function flip_view(self)
+	if self.direction_to_target.x > 0 then
+		go.set(self.view, "scale.x", -1)
+		go.set_rotation(vmath.euler_to_quat(0, -180.0, 18.759), self.attack_go)
+		local attack_position = go.get_position(self.attack_go)
+		attack_position.x = 151.0
+		go.set_position(attack_position, self.attack_go)
+	elseif self.direction_to_target.x < 0 then
+		go.set(self.view, "scale.x", 1)
+		go.set_rotation(vmath.euler_to_quat(0.0, 0, 18.759), self.attack_go)
+		local attack_position = go.get_position(self.attack_go)
+		attack_position.x = -151.0
+		go.set_position(attack_position, self.attack_go)
+	end
+end
+
+local function contact_point_handler(self, message)
+	self.is_on_ground = true
+	self.velocity.y = 0
+end
+
+local function get_index(list, searching_value)
+	local index = -1
+
+	for i = 1, #list do
+		if list[i] == searching_value then
+			index = i
+			break
+		end
+	end
+
+	return index
+end
+
+local function other_enemy_collision_handler(self, message)
+	local id_index = get_index(self.close_enemies_ids, message.other_id)
+	if message.enter and id_index == -1 then
+		table.insert(self.close_enemies_ids, message.other_id)
+	elseif not message.enter and id_index ~= -1 then
+		--table.remove(self.close_enemies_ids, id_index)
+	end
+end
+
+local function try_to_attack(self, dt)
+	if self.in_attack_in_cooldown then
+		if self.attack_cooldown_time_elapsed >= self.attack_cooldown then
+			self.in_attack_in_cooldown = false
+			self.attack_cooldown_time_elapsed = 0
+		else
+			self.attack_cooldown_time_elapsed = self.attack_cooldown_time_elapsed + dt
+		end
+		return
+	end
+
+	if not self.in_attack_distance then
+		return
+	end
+
+	if not self.in_attack_in_progress then
+		start_attack(self)
+		return
+	end
+	self.attack_time_elapsed = self.attack_time_elapsed + dt
+	if self.attack_time_elapsed >= self.attack_duration then
+		end_attack(self)
+	end
+end
+
+local function try_move_to_target(self, dt)
+	if not self.is_on_ground then return end
+
+	local target_pos         = go.get_position("/player/player")
+	local xz_delta           = target_pos - self.position
+	xz_delta.y               = 0
+
+	local abs_x              = math.abs(xz_delta.x)
+	local abs_z              = math.abs(xz_delta.z)
+
+	local desired_direction  = vmath.normalize(xz_delta)
+
+	self.movement_direction  = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0),
+		desired_direction, self.close_enemies_ids)
+	self.direction_to_target = self.movement_direction
+	self.in_attack_distance  = abs_z < 12 and abs_x < 24
+
+	local is_too_close       = abs_z < 7.5 and abs_x < 15
+
+	if is_too_close then
+		self.speed               = math.min(self.speed + self.acceleration * dt, self.max_speed)
+		self.direction_to_target = -1 * self.direction_to_target
+	elseif self.in_attack_distance then
+		self.speed = 0
+	else
+		self.speed = math.min(self.speed + self.acceleration * dt, self.max_speed)
+	end
+	self.velocity.x = self.direction_to_target.x * self.speed
+	self.velocity.z = self.direction_to_target.z * self.speed
+end
+
+local function move(self, dt)
+	local move_dt = self.velocity * dt
+	local pos = self.position + move_dt
+	go.set_position(pos)
+	self.position = pos
+	return vmath.length_sqr(move_dt) > 0.00001
+end
+
+local function gravitation(self, dt)
+	if self.is_on_ground then
+		return
+	end
+	self.velocity.y = self.velocity.y - GRAV * dt
+	if self.velocity.y < MIN then self.velocity.y = MIN end
+end
+
+local function init_movement_fx(self)
+	self.scale = self.scale or go.get_scale().x / 0.04
+	sounds:play(self.sfx_id, { speed = self.scale })
+	go.set(self.view, "rotation.z", -math.pi / 80)
+	go.animate(self.view, "rotation.z", go.PLAYBACK_LOOP_PINGPONG, math.pi / 80, go.EASING_LINEAR, 1)
+end
+
+local function stop_movement_fx(self)
+	go.cancel_animations(self.view, "rotation")
+	go.animate(self.view, "rotation.z", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.2)
+	sounds:stop(self.sfx_id)
+end
+
+function fixed_update(self, dt)
+	gravitation(self, dt)
+	if self.health <= 0 then
+		return
+	end
+
+	if not self.in_attack_in_progress then
+		try_move_to_target(self, dt)
+
+		if move(self, dt) and not self.movement_is_active then
+			init_movement_fx(self)
+			self.movement_is_active = true
+		end
+	else
+		stop_movement_fx(self)
+		self.movement_is_active = false
+	end
+	flip_view(self)
+
+	try_to_attack(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if self.health <= 0 then
+		return
+	end
+
+	if message_id == contact_point_response then
+		contact_point_handler(self, message)
+	elseif message_id == trigger_response and message.own_group == ahash.enemy and message.other_group == ahash.enemy then
+		other_enemy_collision_handler(self, message)
+	elseif message_id == ahash.attack then
+		change_health(self, -message.damage)
+	elseif message_id == hash("INIT") then
+		self.view = message.view_id
+		self.attack_go = message.attack_view_id
+		self.sfx_id = message.sfx_id
+		msg.post(self.attack_go, "disable")
+	end
+end

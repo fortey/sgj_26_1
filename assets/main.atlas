@@ -110,4 +110,9 @@ images {
   image: "/assets/images/props/tree.png"
   pivot_y: 1.0
 }
+images {
+  image: "/assets/images/sun.png"
+  pivot_x: 0.474115
+  pivot_y: 0.538988
+}
 extrude_borders: 2

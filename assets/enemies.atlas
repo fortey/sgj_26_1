@@ -6,4 +6,30 @@ images {
 images {
   image: "/assets/images/enemies/jotun/jotun_attack_vfx.png"
 }
+images {
+  image: "/assets/images/enemies/enemy2/bullet_ice1.png"
+}
+images {
+  image: "/assets/images/enemies/enemy2/bullet_ice2.png"
+}
+images {
+  image: "/assets/images/enemies/enemy2/enemy2_arm.png"
+  pivot_x: 0.407727
+  pivot_y: 0.030759
+}
+images {
+  image: "/assets/images/enemies/enemy2/enemy2_body.png"
+  pivot_x: 0.484524
+  pivot_y: 0.813425
+}
+images {
+  image: "/assets/images/enemies/enemy2/enemy2_leg.png"
+  pivot_x: 0.475068
+  pivot_y: 0.055086
+}
+images {
+  image: "/assets/images/enemies/boss/boss.png"
+  pivot_x: 0.499482
+  pivot_y: 0.983292
+}
 extrude_borders: 2

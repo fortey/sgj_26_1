@@ -9,7 +9,7 @@ local function start_attack(self)
 	msg.post(".", "enable")
 	go.set(".", "scale", 0.01)
 	go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.0, 1.0, 1.0), go.EASING_LINEAR, 0.1)
-	sounds:play("#jotun_attack_sfx", { speed = math.random(90, 110)/100 })
+	sounds:play("#jotun_attack_sfx", { speed = math.random(90, 110) / 100 })
 end
 
 local function reset_attack(self)
@@ -25,8 +25,8 @@ end
 
 function init(self)
 	reset_attack(self)
-	go.animate("#attack_view", "u_brightness_time", go.PLAYBACK_LOOP_PINGPONG, vmath.vector4(3.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 3.0)
-	go.animate("#attack_view", "u_waving_time", go.PLAYBACK_LOOP_FORWARD, vmath.vector4(6.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 0.5)
+	--go.animate("#attack_view", "u_brightness_time", go.PLAYBACK_LOOP_PINGPONG, vmath.vector4(3.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 3.0)
+	--go.animate("#attack_view", "u_waving_time", go.PLAYBACK_LOOP_FORWARD, vmath.vector4(6.14, 0.0, 0.0, 0.0), go.EASING_LINEAR, 0.5)
 end
 
 function fixed_update(self, dt)

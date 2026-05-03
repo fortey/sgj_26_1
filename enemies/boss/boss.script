@@ -165,12 +165,17 @@ end
 local function try_move_to_target(self, dt)
 	if not self.is_on_ground then return end
 
-	local target_pos         = go.get_position("/player/player")
-	local xz_delta           = target_pos - self.position
-	xz_delta.y               = 0
+	local target_pos = go.get_position("/player/player")
+	local xz_delta   = target_pos - self.position
+	xz_delta.y       = 0
 
-	local abs_x              = math.abs(xz_delta.x)
-	local abs_z              = math.abs(xz_delta.z)
+	local abs_x      = math.abs(xz_delta.x)
+	local abs_z      = math.abs(xz_delta.z)
+
+	if not self.is_active then
+		self.is_active = abs_z < 40 and abs_x < 60
+		return
+	end
 
 	desired_direction        = vmath.normalize(xz_delta)
 

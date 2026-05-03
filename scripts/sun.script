@@ -1,0 +1,8 @@
+local monarch = require "monarch.monarch"
+
+function init(self)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, go.get_position() + vmath.vector3(0, 30, 0),
+		go.EASING_LINEAR, 2, 0, function()
+			monarch.show("final")
+		end)
+end

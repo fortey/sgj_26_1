@@ -1,0 +1,24 @@
+local ahash = require "ahash.ahash"
+
+function on_message(self, message_id, message, sender)
+	if message_id == ahash.start_melting then
+		if self.views_ids then
+			for key, value in ipairs(self.views_ids) do
+				if value then
+					msg.post(value, ahash.start_melting)
+				end
+			end
+		end
+	elseif message_id == ahash.attack then
+		print("view attack resend")
+		if self.views_ids then
+			for key, value in ipairs(self.views_ids) do
+				if value then
+					msg.post(value, ahash.attack)
+				end
+			end
+		end
+	elseif message_id == ahash.INIT then
+		self.views_ids = message.views_ids
+	end
+end

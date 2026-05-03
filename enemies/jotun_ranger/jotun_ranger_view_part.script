@@ -1,0 +1,11 @@
+local ahash = require "ahash.ahash"
+
+function on_message(self, message_id, message, sender)
+	if message_id == ahash.start_melting then
+		print("view melting")
+		go.animate("#sprite", "u_melting_degree", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1.57), go.EASING_LINEAR, 1)
+	elseif message_id == ahash.attack then
+		print("view attack")
+		go.animate("#sprite", "u_hit", go.PLAYBACK_ONCE_BACKWARD, vmath.vector4(1), go.EASING_LINEAR, 0.1)
+	end
+end

@@ -5,6 +5,13 @@ local jotun_parts = {
 	VIEW = hash("/views"),
 	ATTACK_VIEW = hash("/attack"),
 	SFX = hash("/sfx"),
+	VIEW_PARTS ={
+		LEG_RIGHT = hash("/leg_right"),
+		LEG_LEFT = hash("/leg_left"),
+		ARM_RIGHT = hash("/arm_right"),
+		ARM_LEFT = hash("/arm_left"),
+		BODY = hash("/body"),
+	}
 }
 
 local function create(self, position)
@@ -16,7 +23,14 @@ local function create(self, position)
 		attack_view_id = entity_ids[jotun_parts.ATTACK_VIEW],
 		sfx_id = entity_ids[jotun_parts.SFX]
 	})
-	
+	local view_parts = { 
+		entity_ids[jotun_parts.VIEW_PARTS.LEG_RIGHT], 
+		entity_ids[jotun_parts.VIEW_PARTS.LEG_LEFT], 
+		entity_ids[jotun_parts.VIEW_PARTS.ARM_RIGHT], 
+		entity_ids[jotun_parts.VIEW_PARTS.ARM_LEFT], 
+		entity_ids[jotun_parts.VIEW_PARTS.BODY], 
+	}
+	msg.post(entity_ids[jotun_parts.VIEW], "INIT", { views_ids = view_parts })
 end
 
 function init(self)

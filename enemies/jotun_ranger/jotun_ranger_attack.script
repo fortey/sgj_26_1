@@ -9,7 +9,7 @@ local function start_attack(self)
 	msg.post(".", "enable")
 	sounds:play("#jotun_attack_sfx", { speed = math.random(90, 110)/100 })
 	local self_position = go.get_world_position()
-	local target_pos = go.get_world_position("/player/player")
+	local target_pos = go.get_world_position("/player/player") + vmath.vector3(0, 2, 0)
 	local delta = target_pos - self_position
 	local desired_direction = vmath.normalize(delta)
 	for i = 1, self.projectiles_number do

@@ -94,8 +94,7 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: -6.0\\n"
-  "      y: 16.0\\n"
+  "      y: 21.0\\n"
   "    }\\n"
   "    rotation {\\n"
   "    }\\n"
@@ -103,7 +102,7 @@ embedded_instances {
   "    count: 1\\n"
   "    id: \\\"head\\\"\\n"
   "  }\\n"
-  "  data: 6.5\\n"
+  "  data: 10.0\\n"
   "  data: 5.0\\n"
   "  data: 4.9\\n"
   "}\\n"
@@ -141,35 +140,18 @@ embedded_instances {
 }
 embedded_instances {
   id: "views"
+  children: "arm_left"
+  children: "arm_right"
+  children: "body"
+  children: "leg_left"
+  children: "leg_right"
   data: "components {\n"
-  "  id: \"jotun_view\"\n"
-  "  component: \"/enemies/jotun/jotun_view.script\"\n"
-  "}\n"
-  "embedded_components {\n"
-  "  id: \"main_view\"\n"
-  "  type: \"sprite\"\n"
-  "  data: \"default_animation: \\\"jotun\\\"\\n"
-  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
-  "size {\\n"
-  "  x: 548.0\\n"
-  "  y: 583.0\\n"
-  "}\\n"
-  "textures {\\n"
-  "  sampler: \\\"tex0\\\"\\n"
-  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
-  "}\\n"
-  "textures {\\n"
-  "  sampler: \\\"tex1\\\"\\n"
-  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
-  "}\\n"
-  "\"\n"
-  "  position {\n"
-  "    y: 10.0\n"
-  "  }\n"
+  "  id: \"jotun_ranger_view\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view.script\"\n"
   "}\n"
   ""
   position {
-    y: 6.0
+    y: 17.0
   }
 }
 embedded_instances {
@@ -218,4 +200,187 @@ embedded_instances {
   "\"\n"
   "}\n"
   ""
+}
+embedded_instances {
+  id: "body"
+  data: "components {\n"
+  "  id: \"jotun_ranger_view_part\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view_part.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"enemy2_body\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex0\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: 0.02\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    y: 194.0
+    z: 10.0
+  }
+}
+embedded_instances {
+  id: "arm_right"
+  data: "components {\n"
+  "  id: \"jotun_ranger_view_part\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view_part.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"enemy2_arm\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
+  "size {\\n"
+  "  x: 405.0\\n"
+  "  y: 479.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex0\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.02\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 165.0
+    y: 362.0
+    z: -50.0
+  }
+  rotation {
+    z: -0.0029785475
+    w: 0.9999956
+  }
+}
+embedded_instances {
+  id: "arm_left"
+  data: "components {\n"
+  "  id: \"jotun_ranger_view_part\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view_part.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"enemy2_arm\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
+  "size {\\n"
+  "  x: 74.0\\n"
+  "  y: 294.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex0\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.02\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -137.0
+    y: 360.0
+    z: -50.0
+  }
+  scale3 {
+    x: -1.0
+  }
+}
+embedded_instances {
+  id: "leg_left"
+  data: "components {\n"
+  "  id: \"jotun_ranger_view_part\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view_part.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"enemy2_leg\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
+  "size {\\n"
+  "  x: 74.0\\n"
+  "  y: 294.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex0\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.01\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -39.0
+    y: 133.0
+    z: -25.0
+  }
+  scale3 {
+    x: -1.0
+  }
+}
+embedded_instances {
+  id: "leg_right"
+  data: "components {\n"
+  "  id: \"jotun_ranger_view_part\"\n"
+  "  component: \"/enemies/jotun_ranger/jotun_ranger_view_part.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"enemy2_leg\\\"\\n"
+  "material: \\\"/resources/materials/jotun/jotun.material\\\"\\n"
+  "size {\\n"
+  "  x: 63.0\\n"
+  "  y: 149.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex0\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"tex1\\\"\\n"
+  "  texture: \\\"/assets/enemies.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    z: -0.01\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 55.0
+    y: 133.0
+    z: -25.0
+  }
+  scale3 {
+    x: -1.0
+  }
 }

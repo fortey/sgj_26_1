@@ -4,7 +4,7 @@ local jotun_parts = {
 	JOTUN = hash("/jotun"),
 	VIEW = hash("/views"),
 	ATTACK_VIEW = hash("/attack"),
-	SFX = hash("/sfx"),
+	SFX = hash("/sfx")
 }
 
 local function create(self, position)

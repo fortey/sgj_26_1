@@ -26,20 +26,29 @@ local function drop_sun(self)
 end
 
 local function on_attack_finish_animation_end(self, url, property)
-	msg.post(self.attack_go, "end_attack")
+	--msg.post(self.attack_go, "end_attack")
 end
 
 local function end_attack(self)
 	self.in_attack_in_cooldown = true
 	self.in_attack_in_progress = false
 	self.attack_time_elapsed = 0
-	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05,
-		0.0, on_attack_finish_animation_end)
+	-- go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05,
+	-- 	0.0, on_attack_finish_animation_end)
 end
 
 local function start_attack(self)
 	self.in_attack_in_progress = true
-	msg.post(self.attack_go, "start_attack")
+	local bullet_pos           = go.get_position()
+	bullet_pos.y               = bullet_pos.y + 20
+
+	local target_pos           = go.get_position("/player/player")
+	local direction            = vmath.normalize(target_pos - bullet_pos)
+
+	local bullet_id            = factory.create(self.bullet_factory, bullet_pos)
+	local bullet_velocity      = direction * 30
+	msg.post(bullet_id, "set_velocity", { velocity = bullet_velocity })
+	--msg.post(self.attack_go, "start_attack")
 end
 
 local function death_handler(self)
@@ -81,6 +90,8 @@ function init(self)
 	self.current_tile_coords = nil
 	self.movement_is_active = false
 	self.id = go.get_id()
+
+	self.bullet_factory = msg.url("#bullet_factory")
 end
 
 local function flip_view(self)
@@ -161,19 +172,20 @@ local function try_move_to_target(self, dt)
 	local abs_x              = math.abs(xz_delta.x)
 	local abs_z              = math.abs(xz_delta.z)
 
-	local desired_direction  = vmath.normalize(xz_delta)
+	desired_direction        = vmath.normalize(xz_delta)
 
 	self.movement_direction  = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0),
 		desired_direction, self.close_enemies_ids)
 	self.direction_to_target = self.movement_direction
-	self.in_attack_distance  = abs_z < 12 and abs_x < 24
+	self.in_attack_distance  = abs_z < 25 and abs_x < 50
 
-	local is_too_close       = abs_z < 7.5 and abs_x < 15
+	--local is_too_close       = abs_z < 7.5 and abs_x < 15
 
-	if is_too_close then
-		self.speed               = math.min(self.speed + self.acceleration * dt, self.max_speed)
-		self.direction_to_target = -1 * self.direction_to_target
-	elseif self.in_attack_distance then
+	-- if is_too_close then
+	-- 	self.speed               = math.min(self.speed + self.acceleration * dt, self.max_speed)
+	-- 	self.direction_to_target = -1 * self.direction_to_target
+	-- else
+	if self.in_attack_distance then
 		self.speed = 0
 	else
 		self.speed = math.min(self.speed + self.acceleration * dt, self.max_speed)

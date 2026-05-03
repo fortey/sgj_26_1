@@ -3,6 +3,7 @@ scale_along_z: 0
 embedded_instances {
   id: "jotun"
   children: "attack"
+  children: "bullet_start_positon"
   children: "sfx"
   children: "views"
   data: "components {\n"
@@ -11,6 +12,11 @@ embedded_instances {
   "  properties {\n"
   "    id: \"squared_distance_to_attack\"\n"
   "    value: \"600.0\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"health\"\n"
+  "    value: \"10.0\"\n"
   "    type: PROPERTY_TYPE_NUMBER\n"
   "  }\n"
   "}\n"
@@ -111,6 +117,12 @@ embedded_instances {
   "  data: 50.0\\n"
   "  data: 100.0\\n"
   "}\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"bullet_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/prefabs/bullet.go\\\"\\n"
   "\"\n"
   "}\n"
   ""
@@ -234,5 +246,12 @@ embedded_instances {
   rotation {
     x: -0.23004974
     w: 0.97317886
+  }
+}
+embedded_instances {
+  id: "bullet_start_positon"
+  data: ""
+  position {
+    y: 426.0
   }
 }

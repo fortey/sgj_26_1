@@ -428,6 +428,7 @@ end
 local function attack(self, pressed)
     if self.current_animation ~= animations.attack and self.form.attack then
         set_animation(self, animations.attack)
+        sounds:play(sounds.knife)
         if self.form.attack_vfx then
             timer.delay(0.1, false, function()
                 sprite.play_flipbook(self.vfx, self.form.attack_vfx)

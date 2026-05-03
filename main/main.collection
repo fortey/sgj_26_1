@@ -56,6 +56,13 @@ embedded_instances {
   "group: \\\"effects\\\"\\n"
   "\"\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"knife\"\n"
+  "  type: \"sound\"\n"
+  "  data: \"sound: \\\"/assets/sounds/Knife.ogg\\\"\\n"
+  "group: \\\"effects\\\"\\n"
+  "\"\n"
+  "}\n"
   ""
 }
 embedded_instances {

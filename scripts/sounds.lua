@@ -6,6 +6,7 @@ function M:init()
     self.eagle = msg.url("/sounds#eagle")
     self.loot_down = msg.url("/sounds#loot_down")
     self.loot_up = msg.url("/sounds#loot_up")
+    self.knife = msg.url("/sounds#knife")
 end
 
 function M:play(sound_url, properties)

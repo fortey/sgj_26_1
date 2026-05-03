@@ -11,14 +11,16 @@ go.property("health", 5)
 
 go.property("distance_to_avoid_other_enemy", 20)
 
-local steering = require("helper.steering")
-local GRAV = 90
-local MIN = -30
+local events                 = require("event.events")
+local constants              = require("scripts.constants")
+local steering               = require("helper.steering")
+local GRAV                   = 90
+local MIN                    = -30
 
 local contact_point_response = hash("contact_point_response")
-local trigger_response = hash("trigger_response")
-local sounds = require("scripts.sounds")
-local ahash = require "ahash.ahash"
+local trigger_response       = hash("trigger_response")
+local sounds                 = require("scripts.sounds")
+local ahash                  = require "ahash.ahash"
 
 local function drop_sun(self)
 	local sun_position = go.get_position() + vmath.vector3(0.0, 5, 0.0)
@@ -71,6 +73,14 @@ local function change_health(self, delta)
 	end
 end
 
+local function on_enemy_die(self)
+	self.kills = self.kills + 1
+
+	if not self.is_active and self.kills > 6 then
+		self.is_active = true
+	end
+end
+
 function init(self)
 	self.velocity = vmath.vector3()
 	self.speed = 0
@@ -92,6 +102,12 @@ function init(self)
 	self.id = go.get_id()
 
 	self.bullet_factory = msg.url("#bullet_factory")
+	self.kills = 0
+	events.subscribe(constants.events.on_enemy_die, on_enemy_die, self)
+end
+
+function final(self)
+	events.unsubscribe(constants.events.on_enemy_die, on_enemy_die, self)
 end
 
 local function flip_view(self)
@@ -237,9 +253,11 @@ function fixed_update(self, dt)
 	if not self.in_attack_in_progress then
 		try_move_to_target(self, dt)
 
-		if move(self, dt) and not self.movement_is_active then
-			init_movement_fx(self)
-			self.movement_is_active = true
+		if self.is_active then
+			if move(self, dt) and not self.movement_is_active then
+				init_movement_fx(self)
+				self.movement_is_active = true
+			end
 		end
 	else
 		stop_movement_fx(self)

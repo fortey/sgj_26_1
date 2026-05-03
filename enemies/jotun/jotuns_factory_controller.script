@@ -20,9 +20,9 @@ local function create(self, position)
 end
 
 function init(self)
-	--create(self, vmath.vector3(40, 0, 10))
-	--create(self, vmath.vector3(10, 0, 40))
-	--create(self, vmath.vector3(-40, 0, 0))
+	create(self, vmath.vector3(40, 0, 10))
+	create(self, vmath.vector3(10, 0, 40))
+	create(self, vmath.vector3(-40, 0, 0))
 	--create(self, vmath.vector3(40, 0, -40))
 	--create(self, vmath.vector3(28, 0, 28))
 	--create(self, vmath.vector3(-28, 0, -28))

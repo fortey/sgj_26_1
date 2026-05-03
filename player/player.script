@@ -1,12 +1,14 @@
 -- Player controller
 
-local inputmapper     = require 'input.inputmapper'
-local broadcast       = require "helper.broadcast"
-local common          = require 'helper.common'
-local events          = require("event.events")
-local constants       = require("scripts.constants")
-local ahash           = require "ahash.ahash"
-local sounds          = require("scripts.sounds")
+local inputmapper = require 'input.inputmapper'
+local broadcast   = require "helper.broadcast"
+local common      = require 'helper.common'
+local events      = require("event.events")
+local constants   = require("scripts.constants")
+local ahash       = require "ahash.ahash"
+local sounds      = require("scripts.sounds")
+local monarch     = require "monarch.monarch"
+
 
 local panthera        = require("panthera.panthera")
 local animation       = require("resources.anims.girl")
@@ -43,6 +45,12 @@ local function take_damage(self)
     self.hp = math.max(0, self.hp - 1)
     self.invulnerability_time = INVULNERABILITY
     events.trigger(constants.events.on_damage, self.hp)
+
+    if self.hp == 0 then
+        timer.delay(1, false, function()
+            monarch.show("gameover")
+        end)
+    end
 end
 
 local function take_item(self, item_id)
@@ -61,6 +69,15 @@ local function take_form(self, form_key)
     events.trigger(constants.events.take_form, form_key, { sx = x, sy = y })
 
     sounds:play(sounds.loot_up)
+end
+
+local function on_enemy_die(self)
+    self.kills = self.kills + 1
+    if self.kills == 1 then
+        take_form(self, "bear")
+    elseif self.kills == 4 then
+        take_form(self, "eagle")
+    end
 end
 
 local function change_form(self, form_key)
@@ -125,6 +142,7 @@ function init(self)
     self.jump_dt              = 0
     self.min_y                = MIN
     self.invulnerability_time = 0
+    self.kills                = 0
 
     self.forms                = {
         girl = girl_state,
@@ -161,14 +179,7 @@ function init(self)
     end)
 
     events.subscribe(constants.events.on_form_click, on_form, self)
-
-    timer.delay(1, false, function()
-        take_damage(self)
-        take_form(self, "bear")
-    end)
-    timer.delay(2, false, function()
-        take_form(self, "eagle")
-    end)
+    events.subscribe(constants.events.on_enemy_die, on_enemy_die, self)
 
     msg.post(self.form.attack_trigger, "disable")
 end
@@ -179,6 +190,7 @@ function final(self)
     msg.post(".", "release_input_focus")
 
     events.unsubscribe(constants.events.on_form_click, on_form, self)
+    events.unsubscribe(constants.events.on_enemy_die, on_enemy_die, self)
 end
 
 -- Flip

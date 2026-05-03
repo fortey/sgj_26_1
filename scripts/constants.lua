@@ -6,7 +6,8 @@ M.events = {
     on_damage = "on_damage",
     take_crystal = "take_crystal",
     take_form = "take_form",
-    form_cooldown = "form_cooldown"
+    form_cooldown = "form_cooldown",
+    on_enemy_die = "on_enemy_die"
 }
 
 return M

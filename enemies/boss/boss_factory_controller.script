@@ -9,7 +9,7 @@ local jotun_parts = {
 
 local function create(self, position)
 	local entity_ids = collectionfactory.create(self.factory_path, position)
-	go.set_scale(0.04 * math.random(85, 115) / 100, entity_ids[jotun_parts.JOTUN])
+	go.set_scale(0.04, entity_ids[jotun_parts.JOTUN])
 	go.set_rotation(vmath.euler_to_quat(0, 0, 0), entity_ids[jotun_parts.JOTUN])
 	msg.post(entity_ids[jotun_parts.JOTUN], "INIT", {
 		view_id = entity_ids[jotun_parts.VIEW],
@@ -19,5 +19,5 @@ local function create(self, position)
 end
 
 function init(self)
-	create(self, vmath.vector3(100, 0, 10))
+	create(self, vmath.vector3(200, 0, 10))
 end

@@ -13,19 +13,24 @@ go.property("health", 5)
 go.property("distance_to_avoid_player_x", 15)
 go.property("distance_to_avoid_player_z", 7.5)
 
-local steering = require("helper.steering")
-local GRAV = 90
-local MIN = -30
+local events                 = require("event.events")
+local constants              = require("scripts.constants")
+
+local steering               = require("helper.steering")
+local GRAV                   = 90
+local MIN                    = -30
 
 local contact_point_response = hash("contact_point_response")
-local trigger_response = hash("trigger_response")
-local sounds = require("scripts.sounds")
-local ahash = require "ahash.ahash"
+local trigger_response       = hash("trigger_response")
+local sounds                 = require("scripts.sounds")
+local ahash                  = require "ahash.ahash"
 
 local function drop_crystal(self)
 	local crystal_position = self.position + vmath.vector3(0.0, 0.5, 0.0)
-	local new_crystal = factory.create("/collectibles_factory#crystals_factory", crystal_position, vmath.euler_to_quat(-26.6, 0, 0), nil, vmath.vector3(1.0))
-	go.animate(new_crystal, "position", go.PLAYBACK_ONCE_PINGPONG, crystal_position + vmath.vector3(0, 7.5, 0), go.EASING_OUTCIRC, 0.6)
+	local new_crystal = factory.create("/collectibles_factory#crystals_factory", crystal_position,
+		vmath.euler_to_quat(-26.6, 0, 0), nil, vmath.vector3(1.0))
+	go.animate(new_crystal, "position", go.PLAYBACK_ONCE_PINGPONG, crystal_position + vmath.vector3(0, 7.5, 0),
+		go.EASING_OUTCIRC, 0.6)
 end
 
 local function on_attack_finish_animation_end(self, url, property)
@@ -36,7 +41,8 @@ local function end_attack(self)
 	self.is_attack_in_cooldown = true
 	self.is_attack_in_progress = false
 	self.attack_time_elapsed = 0
-	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05, 0.0, on_attack_finish_animation_end)
+	go.animate(self.attack_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(0.01, 0.01, 0.01), go.EASING_LINEAR, 0.05,
+		0.0, on_attack_finish_animation_end)
 end
 
 local function start_attack(self)
@@ -53,6 +59,7 @@ local function death_handler(self)
 	timer.delay(1.0, false, function()
 		go.delete(go.get_id(), true)
 	end)
+	events.trigger(constants.events.on_enemy_die)
 end
 
 local function change_health(self, delta)
@@ -142,7 +149,7 @@ local function try_to_attack(self, dt)
 	if not self.is_attack_distance then
 		return
 	end
-	
+
 	if not self.is_attack_in_progress then
 		start_attack(self)
 		return
@@ -165,14 +172,15 @@ local function try_move_to_target(self, dt)
 
 	local desired_direction = vmath.normalize(xz_delta)
 
-	self.movement_direction = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0), desired_direction, self.close_enemies_ids)
+	self.movement_direction = steering.get_steering_direction(go.get_id(), self.position + vmath.vector3(0, 3, 0),
+		desired_direction, self.close_enemies_ids)
 	self.direction_to_target = desired_direction
 	self.is_attack_distance = abs_z < self.attack_distance_z and abs_x < self.attack_distance_x
 
 	local is_too_close = abs_z < self.distance_to_avoid_player_z and abs_x < self.distance_to_avoid_player_x
 
 	if is_too_close then
-		self.speed  = math.min(self.speed + self.acceleration * dt, self.max_speed)
+		self.speed              = math.min(self.speed + self.acceleration * dt, self.max_speed)
 		self.movement_direction = -1 * self.movement_direction
 	elseif self.is_attack_distance then
 		self.speed = 0
@@ -202,8 +210,8 @@ end
 local function init_movement_fx(self)
 	self.scale = self.scale or go.get_scale().x / 0.04
 	sounds:play(self.sfx_id, { speed = self.scale })
-	go.set(self.view, "rotation.z", -math.pi/80)
-	go.animate(self.view, "rotation.z", go.PLAYBACK_LOOP_PINGPONG, math.pi/80, go.EASING_LINEAR, 1)
+	go.set(self.view, "rotation.z", -math.pi / 80)
+	go.animate(self.view, "rotation.z", go.PLAYBACK_LOOP_PINGPONG, math.pi / 80, go.EASING_LINEAR, 1)
 end
 
 local function stop_movement_fx(self)
@@ -217,10 +225,10 @@ function fixed_update(self, dt)
 	if self.health <= 0 then
 		return
 	end
-	
+
 	if not self.is_attack_in_progress then
 		try_move_to_target(self, dt)
-		
+
 		if move(self, dt) and not self.movement_is_active then
 			init_movement_fx(self)
 			self.movement_is_active = true
@@ -234,12 +242,11 @@ function fixed_update(self, dt)
 	try_to_attack(self, dt)
 end
 
-
 function on_message(self, message_id, message, sender)
 	if self.health <= 0 then
 		return
 	end
-	
+
 	if message_id == contact_point_response then
 		contact_point_handler(self, message)
 	elseif message_id == trigger_response and message.own_group == ahash.enemy and message.other_group == ahash.enemy then

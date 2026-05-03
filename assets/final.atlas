@@ -1,4 +1,7 @@
 images {
   image: "/assets/images/final.png"
 }
+images {
+  image: "/assets/images/ui/end.png"
+}
 extrude_borders: 2

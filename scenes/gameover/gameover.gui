@@ -1,0 +1,78 @@
+script: "/scenes/gameover/gameover.gui_script"
+fonts {
+  name: "base"
+  font: "/assets/fonts/base.font"
+}
+textures {
+  name: "final"
+  texture: "/assets/final.atlas"
+}
+nodes {
+  position {
+    x: 960.0
+    y: 540.0
+  }
+  size {
+    x: 1920.0
+    y: 1080.0
+  }
+  color {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  type: TYPE_BOX
+  id: "box"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 147.0
+  }
+  type: TYPE_BOX
+  texture: "final/end"
+  id: "box1"
+  parent: "box"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 741.0
+    y: -389.0
+  }
+  size {
+    x: 210.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\267\320\260\320\275\320\276\320\262\320\276"
+  font: "base"
+  id: "button"
+  parent: "box"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -61.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  color {
+    x: 0.17254902
+    y: 0.34509805
+    z: 0.41568628
+  }
+  type: TYPE_TEXT
+  text: "\321\202\321\213 \320\277\321\200\320\276\320\270\320\263\321\200\320\260\320\273,\n"
+  "\321\201\320\276\320\273\320\275\321\206\320\265 \321\202\320\260\320\272 \320\270 \320\275\320\265 \320\262\320\267\320\276\321\210\320\273\320\276"
+  font: "base"
+  id: "text"
+  parent: "box"
+  inherit_alpha: true
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

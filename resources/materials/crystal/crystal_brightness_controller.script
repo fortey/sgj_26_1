@@ -1,4 +1,4 @@
 function init(self)
-	go.set("#sprite", "u_brightness_offset", vmath.vector4(-10, 0.0, 0.0, 0.0))
-	go.animate("#sprite", "u_brightness_offset", go.PLAYBACK_LOOP_FORWARD, vmath.vector4(5, 0.0, 0.0, 0.0), go.EASING_LINEAR, 1.5)
+	go.set("#sprite", "u_brightness_offset", vmath.vector4(-15, 0.0, 0.0, 0.0))
+	go.animate("#sprite", "u_brightness_offset", go.PLAYBACK_LOOP_FORWARD, vmath.vector4(15, 0.0, 0.0, 0.0), go.EASING_LINEAR, 1.5)
 end

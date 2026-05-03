@@ -7,11 +7,15 @@ components {
     type: PROPERTY_TYPE_HASH
   }
 }
+components {
+  id: "crystal_brightness_controller"
+  component: "/resources/materials/crystal/crystal_brightness_controller.script"
+}
 embedded_components {
   id: "sprite"
   type: "sprite"
   data: "default_animation: \"crystal\"\n"
-  "material: \"/builtins/materials/sprite.material\"\n"
+  "material: \"/resources/materials/crystal/crystal.material\"\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
   "  texture: \"/assets/main.atlas\"\n"

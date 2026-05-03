@@ -1,3 +1,5 @@
+#version 140
+
 varying mediump vec4 position;
 varying mediump vec2 var_texcoord0;
 
@@ -19,7 +21,7 @@ void main()
 	lowp vec2 texcoord = var_texcoord0.xy;
 
 	float y = smoothstep(0.1, 0.9, texcoord.x + u_brightness_offset.x/100);
-	lowp vec4 color = texture2D(texture_sampler, texcoord);
+	lowp vec4 color = texture(texture_sampler, texcoord);
 	float pct = plot(texcoord, y);
 	color = (1.0 - pct) * color + pct * (color + vec4(0.5, 0.5, 0.5, 0.0) * step(0.01, color.a));
 

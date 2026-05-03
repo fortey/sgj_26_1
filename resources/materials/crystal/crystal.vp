@@ -1,5 +1,9 @@
-uniform mediump mat4 view_proj;
+#version 140
 
+uniform vs_uniforms
+{
+	uniform mediump mat4 view_proj;
+};
 // positions are in world space
 attribute mediump vec4 position;
 attribute mediump vec2 texcoord0;

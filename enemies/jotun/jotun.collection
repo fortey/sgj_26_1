@@ -155,7 +155,7 @@ embedded_instances {
   "  id: \"attack_view\"\n"
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"jotun_attack_vfx\\\"\\n"
-  "material: \\\"/resources/materials/jotun/jotun_attack.material\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "size {\\n"
   "  x: 555.0\\n"
   "  y: 364.0\\n"

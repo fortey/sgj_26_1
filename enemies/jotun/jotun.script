@@ -12,7 +12,6 @@ go.property("health", 5)
 go.property("distance_to_avoid_other_enemy", 20)
 
 local steering = require("helper.steering")
-local AStar = require "helper.AStar"
 local GRAV = 90
 local MIN = -30
 

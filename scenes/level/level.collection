@@ -367,6 +367,24 @@ instances {
     y: 10.0
     z: 5.0
   }
+  component_properties {
+    id: "sun"
+    properties {
+      id: "color"
+      value: "1.0, 1.0, 1.0, 0.0"
+      type: PROPERTY_TYPE_VECTOR4
+    }
+    properties {
+      id: "PROJECTION_RESOLUTION"
+      value: "600.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "max_lights"
+      value: "0.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
 }
 instances {
   id: "crystal"
@@ -526,6 +544,11 @@ embedded_instances {
   data: "components {\n"
   "  id: \"lightsetting\"\n"
   "  component: \"/light_and_shadows/light_setting.script\"\n"
+  "  properties {\n"
+  "    id: \"ambient\"\n"
+  "    value: \"0.5, 0.5, 0.5, 0.0\"\n"
+  "    type: PROPERTY_TYPE_VECTOR4\n"
+  "  }\n"
   "}\n"
   "components {\n"
   "  id: \"controller\"\n"

@@ -32,4 +32,7 @@ images {
   pivot_x: 0.499482
   pivot_y: 0.983292
 }
+images {
+  image: "/assets/images/enemies/pula1.png"
+}
 extrude_borders: 2

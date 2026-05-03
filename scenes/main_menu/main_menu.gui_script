@@ -24,7 +24,7 @@ function init(self)
     self.sounds_slider:set(settings.data.sounds_volume, true)
 
     self.button_new_game = self.druid:new_button("button_start", function()
-        -- monarch.show("intro")
+        monarch.show("intro")
         -- sounds:stop(sounds.music_url)
         -- sounds:play(sounds.music_url2)
     end)

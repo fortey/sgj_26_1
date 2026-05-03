@@ -44,6 +44,7 @@ type = 3D
 use_fixed_timestep = 1
 max_collisions = 128
 max_contacts = 256
+max_collision_object_count = 512
 
 [html5]
 scale_mode = stretch

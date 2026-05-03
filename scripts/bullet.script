@@ -1,0 +1,30 @@
+local ahash = require "ahash.ahash"
+
+function init(self)
+	self.velocity = vmath.vector3()
+	self.timer = 5
+end
+
+function fixed_update(self, dt)
+	local move_dt = self.velocity * dt
+	local pos = go.get_position() + move_dt
+	go.set_position(pos)
+
+	self.timer = self.timer - dt
+	if self.timer <= 0 then
+		go.delete()
+	end
+end
+
+local trigger_response = hash("trigger_response")
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_velocity") then
+		self.velocity = message.velocity
+	elseif message_id == trigger_response then
+		if message.other_group == ahash.player then
+			msg.post(message.other_id, ahash.attack)
+		end
+		go.delete()
+	end
+end

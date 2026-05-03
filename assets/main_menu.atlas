@@ -1,0 +1,10 @@
+images {
+  image: "/assets/images/menu/menu.png"
+}
+images {
+  image: "/assets/images/menu/line.png"
+}
+images {
+  image: "/assets/images/menu/point.png"
+}
+extrude_borders: 2

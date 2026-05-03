@@ -1,3 +1,7 @@
+components {
+  id: "sun"
+  component: "/scripts/sun.script"
+}
 embedded_components {
   id: "sprite"
   type: "sprite"

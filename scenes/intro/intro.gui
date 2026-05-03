@@ -1,0 +1,18 @@
+script: "/scenes/intro/intro.gui_script"
+textures {
+  name: "intro"
+  texture: "/assets/intro.atlas"
+}
+nodes {
+  position {
+    x: 960.0
+    y: 540.0
+  }
+  type: TYPE_BOX
+  texture: "intro/intro"
+  id: "box"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

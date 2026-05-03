@@ -1,0 +1,15 @@
+go.property("factory_path", msg.url())
+
+local ahash = require "ahash.ahash"
+
+
+local function create(self, position, direction)
+	local angle_z = math.atan2(direction.x, direction.z) * 180 / math.pi - 90
+	factory.create(self.factory_path, position, vmath.euler_to_quat(0, 0, angle_z), { position = position, direction = direction})
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == ahash.instantiate then
+		create(self, message.position, message.direction)
+	end
+end

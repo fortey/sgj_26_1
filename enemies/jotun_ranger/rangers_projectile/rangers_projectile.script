@@ -1,0 +1,42 @@
+go.property("position", vmath.vector3())
+go.property("direction", vmath.vector3())
+go.property("min_speed", 40)
+go.property("max_speed", 50)
+go.property("damage", 1)
+go.property("time_to_disappear", 2)
+
+local views = {
+	"#sprite_1",
+	"#sprite_2",
+}
+local ahash = require "ahash.ahash"
+local trigger_response = hash("trigger_response")
+
+function init(self)
+	timer.delay(self.time_to_disappear, false, function()
+		go.delete(go.get_id(), true)
+	end)
+
+	self.speed = math.random(self.min_speed, self.max_speed)
+	local active_sprite_index = math.random(#views)
+	for i = 1, #views do
+		if i ~= active_sprite_index then
+			msg.post(views[i], ahash.disable)
+		end
+	end
+end
+
+function fixed_update(self, dt)
+	self.position = self.position + self.direction * self.speed * dt
+	go.set_position(self.position, ".")
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == trigger_response and message.other_group == ahash.player then
+		if message.enter then
+			msg.post(message.other_id, ahash.attack, { damage = self.damage })
+			go.delete(go.get_id(), true)
+		end
+	end
+end
